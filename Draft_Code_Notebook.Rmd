@@ -1,5 +1,121 @@
 ---
 title: "Draft_Code_Notebook"
+author: Isabella Adeola, Christina Dai, Hank Standaert, Leo
 output: html_document
 ---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
+```
+
+### A rough introduction written that provides context on your datasets provenance and motivates your analysis.  
+The Cingranelli-Richards (CIRI) Human Rights Data Project is a collection of 15 quantitative human rights indicators, collected annually. This project explores the 2014 version of the dataset, which aggregates data from 202 countries between 1994 and 2014. The data set measures government human rights practices, meaning it does not measure the effects of non-state actors. (SOURCE http://www.humanrightsdata.com/p/faq.html)
+According to the CIRI project website, the data were primarily collected through annual analyses of the U.S. Department of State’s Country Reports on Human Rights Practices, along with supplemental research into Physical Integrity Rights from Amnesty International. A country’s report is typically between 20 and 75 pages. (SOURCE USDOS)
+Each “country-year” is assigned two trained coders, who closely read the reports to assign scores for the variables. If there are disagreements between coders, senior CIRI staff steps in to find a resolution. (SOURCE http://www.humanrightsdata.com/p/faq.html)
+In this project, we focus on key measures such as disappearances, political imprisonment, torture, freedom of speech, and women’s rights to better understand how these indicators vary across countries and regions over time. Our motivation is to compare state-level human rights performances, identify persistent violations, and explore potential drivers of changes in human rights. By grouping the countries by the United Nations geoscheme, our project will also explore cross-regional disparities and trends.
+
+### Write some code to explore and show your reader the structure of your dataset and the different variables involved, performing some initial data restructuring, filtering, and cleaning.  
+Given our aim, we decided to remove the following variables after reading through the variable code definitions from the data base. The code is shown below:  
+```{r}
+ciri_data <- read_csv("data/dataverse_files/CIRI Data 1981_2011 2014.04.14.csv") 
+
+#removing unnecessary variables from data set
+df <- ciri_data %>% 
+  select(-c(COW, 
+            POLITY, 
+            UNSUBREG,
+            PHYSINT,
+            OLD_EMPINX,
+            NEW_EMPINX,
+            ASSN,
+            FORMOV,
+            DOMMOV,
+            OLD_MOVE,
+            SPEECH,
+            ELECSD,
+            OLD_RELFRE,
+            NEW_RELFRE,
+            WORKER,
+            WOSOC,
+            INJUD)) 
+print(df)
+```
+  
+The following code works to delete rows with NA's (missing values) and duplicated rows (there weren't any but we still renamed the variable):  
+```{r}
+print(colSums(is.na(df))) #checking for number of na's in each variable
+
+df_full <- na.omit(df) #deleting rows with na's
+
+print(sum(duplicated(df_full))) #checking for number of duplicates in each variable
+df_no_dups <- distinct(df_full) #deleting rows with duplicates
+```
+  
+### Visualized the distribution of some of these variables and calculated some core tendency measures.
+
+Creating Necessary Variables for Analysis (decade, continent)
+```{r}
+# Making missing code, periods of interregnum, and occupation NAs
+df_no_dups[df_no_dups == -999] <- NA
+df_no_dups[df_no_dups == -77]  <- NA
+df_no_dups[df_no_dups == -66]  <- NA
+
+# Creating decade variable 
+df_decade_region <- df_no_dups %>% 
+  mutate(decade = floor(YEAR/10)*10)
+
+# Map UNREG codes to continent/region names
+region_map <- tibble(
+  UNREG = c(2, 9, 419, 21, 142, 150),
+  CONT = c("Africa", "Oceania", "South & Central America", "North America" , "Asia", "Europe")
+) 
+df_decade_region <- df_decade_region %>%
+  left_join(region_map, by = "UNREG")
+
+
+df_decade_region$CONT.y <- NULL
+
+names(df_decade_region)[names(df_decade_region) == "CONT.x"] <- "CONT"
+
+print(df_decade_region)
+```
+
+Finding Averages Across Relevant Human Rights Indicators
+```{r}
+# Creating list of human rights indicators 
+key_vars <- c("DISAP", "KILL", "POLPRIS", "TORT", "WECON", "WOPOL")
+
+df_continent_decade_avg <- df_decade_region %>%
+  group_by(CONT, CTRY, decade) %>%
+  summarise(across(all_of(key_vars), mean, na.rm = TRUE), .groups = "drop")
+
+df_continent_decade_avg
+```
+
+Visualizing Women Economic Rights in Africa Across Decades
+```{r}
+cont_name <- "Africa"
+
+df_avg <- df_continent_decade_avg %>%
+  filter(CONT == cont_name) %>%
+  group_by(decade) %>%
+  summarize(WECON_avg = mean(WECON, na.rm = TRUE))
+
+ggplot(df_avg, aes(x = decade, y = WECON_avg)) +
+  geom_line(color = "#0072B2", size = 1.2) +
+  geom_point(color = "#D55E00", size = 3) +
+  labs(
+    title = paste("Women's Economic Rights:", cont_name),
+    x = "Decade",
+    y = "Average WECON Value"
+  ) +
+  theme_minimal(base_size = 9)
+```
+
+
+
 
