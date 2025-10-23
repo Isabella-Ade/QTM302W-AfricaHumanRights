@@ -12,11 +12,16 @@ library(dplyr)
 library(tidyverse)
 ```
 
-### A rough introduction written that provides context on your data sets provenance and motivates your analysis.
+## Introduction
 
-The Cingranelli-Richards (CIRI) Human Rights Data Project is a collection of 15 quantitative human rights indicators, collected annually. This project explores the 2014 version of the data set, which aggregates data from 202 countries between 1994 and 2014. The data set measures government human rights practices, meaning it does not measure the effects of non-state actors. (SOURCE <http://www.humanrightsdata.com/p/faq.html>) According to the CIRI project website, the data were primarily collected through annual analyses of the U.S. Department of State’s Country Reports on Human Rights Practices, along with supplemental research into Physical Integrity Rights from Amnesty International. A country’s report is typically between 20 and 75 pages. (SOURCE USDOS) Each “country-year” is assigned two trained coders, who closely read the reports to assign scores for the variables. If there are disagreements between coders, senior CIRI staff steps in to find a resolution. (SOURCE <http://www.humanrightsdata.com/p/faq.html>) In this project, we focus on key measures such as disappearances, political imprisonment, torture, freedom of speech, and women’s rights to better understand how these indicators vary across countries and regions over time. Our motivation is to compare state-level human rights performances, identify persistent violations, and explore potential drivers of changes in human rights. By grouping the countries by the United Nations geoscheme, our project will also explore cross-regional disparities and trends.
+The Cingranelli-Richards (CIRI) Human Rights Data Project is a collection of 15 quantitative human rights indicators, collected annually. This project explores the 2014 version of the data set, which aggregates data from 202 countries between 1994 and 2014. The data set measures government human rights practices, meaning it does not measure the effects of non-state actors. (SOURCE <http://www.humanrightsdata.com/p/faq.html>) According to the CIRI project website, the data were primarily collected through annual analyses of the U.S. Department of State’s Country Reports on Human Rights Practices, along with supplemental research into Physical Integrity Rights from Amnesty International. A country’s report is typically between 20 and 75 pages. (SOURCE USDOS) Each “country-year” is assigned two trained coders, who closely read the reports to assign scores for the variables. If there are disagreements between coders, senior CIRI staff steps in to find a resolution. (SOURCE <http://www.humanrightsdata.com/p/faq.html>) In this project, we focus on key measures such as disappearances, political imprisonment, torture, freedom of speech, and women’s rights to better understand how these indicators vary across countries and regions over time.
 
-### Data Cleaning and Filtering
+Our motivation is to compare state-level human rights performances, identify persistent violations, and explore potential drivers of changes in human rights. By grouping the countries by the United Nations geoscheme, our project will also explore cross-regional disparities and trends.
+
+## Data Exploration 
+
+### Cleaning and Filtering
+
 Given our aim, we decided to remove the following variables after reading through the variable code definitions from the data base. The code is shown below:
 
 ```{r}
@@ -55,7 +60,7 @@ print(sum(duplicated(df_full)))
 df_no_dups <- distinct(df_full) 
 ```
 
-### Visualized the distribution of some of these variables and calculated some core tendency measures.
+### Core Tendency Measures and Visualization
 
 Creating Necessary Variables for Analysis (decade, continent)
 
@@ -134,7 +139,7 @@ Here, we find the average for the human rights indicators across the continent, 
 
 ### Comparing Human Rights Indicators Across Geoschemes
 
-Firstly, we created a function that would allow us to visualize and compare human rights indicators over a period of thirty years across the geoschemes (Asia, Africa, Europe, North America, Oceania, and South & Central America). For all variables except for `WECON` and `WEPOL,` values are all the categorical variables of 0, 1, and 2. **ZERO (0)** indicates that it occurs frequently, **ONE (1)** indicates occasionally, and **TWO (2)** indicates none in a given year. For `WECON` and `WEPOL,` values are categorical variables of 0, 1, 2, and 3. A **ZERO (0)** indicates that there were no rights and that systematic discrimination based on sex may have been built into law. A **ONE (1)** indicates some rights with no government enforcement, a **TWO (2)** indicates some rights and some government enforcement of these rights, and a **THREE (3)** indicates that all or close to all rights were guaranteed and the government fully enforces them. 
+Firstly, we created a function that would allow us to visualize and compare human rights indicators over a period of thirty years across the geoschemes (Asia, Africa, Europe, North America, Oceania, and South & Central America). For all variables except for `WECON` and `WEPOL,` values are all the categorical variables of 0, 1, and 2. **ZERO (0)** indicates that it occurs frequently, **ONE (1)** indicates occasionally, and **TWO (2)** indicates none in a given year. For `WECON` and `WEPOL,` values are categorical variables of 0, 1, 2, and 3. A **ZERO (0)** indicates that there were no rights and that systematic discrimination based on sex may have been built into law. A **ONE (1)** indicates some rights with no government enforcement, a **TWO (2)** indicates some rights and some government enforcement of these rights, and a **THREE (3)** indicates that all or close to all rights were guaranteed and the government fully enforces them.
 
 ```{r}
 plot_hr_indicator <- function(data, indicator, title_label) {
@@ -255,3 +260,39 @@ plot_country_means <- function(data, continent, indicators) {
 # Can pick plot for continent and indicator 
 plot_country_means(df_continent_decade_avg, "Africa", 'WECON')
 ```
+
+
+### Global Heat Map of Human Rights Indicators
+```{r}
+world <- map_data("world")
+
+avg_indicators_long <- avg_indicators_ctry %>%
+  pivot_longer(cols = all_of(key_vars),
+               names_to = "Indicator",
+               values_to = "Score")
+
+map_joined <- world %>%
+  left_join(avg_indicators_long, by = c("region" = "CTRY")) %>%
+  filter(!is.na(Score))
+
+ggplot(map_joined, aes(long, lat, group = group)) +
+  geom_polygon(aes(fill = Score, alpha = Score), color = "white", size = 0.2) +
+  scale_fill_gradient(
+    name = "Score (0–3)",
+    low = "pink", high = "navy"  # no na.value
+  ) +
+  scale_alpha_continuous(range = c(0.3, 1)) +
+  coord_fixed(1.3) +
+  labs(
+    title = "Global Heat Maps of Human Rights Indicators",
+    subtitle = "Color and Transparency represent score intensity (0 = low, 3 = high)"
+  ) +
+  facet_wrap(~ Indicator, ncol = 2) +
+  theme_minimal(base_size = 8) +
+  theme(
+    legend.position = "bottom",
+    strip.text = element_text(face = "bold"), 
+    plot.title = element_text(size = 12, face = "bold"), 
+    plot.subtitle = element_text(size = 9)) 
+```
+
