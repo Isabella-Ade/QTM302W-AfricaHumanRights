@@ -295,5 +295,3 @@ ggplot(map_joined, aes(long, lat, group = group)) +
     plot.title = element_text(size = 12, face = "bold"), 
     plot.subtitle = element_text(size = 9)) 
 ```
-
-hello does this work
