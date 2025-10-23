@@ -1,0 +1,257 @@
+---
+title: "QTM302W-Cleaning"
+author: "Christina, Hank, Isabella, Leo"
+date: "2025-10-14"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(dplyr)
+library(tidyverse)
+```
+
+### A rough introduction written that provides context on your data sets provenance and motivates your analysis.
+
+The Cingranelli-Richards (CIRI) Human Rights Data Project is a collection of 15 quantitative human rights indicators, collected annually. This project explores the 2014 version of the data set, which aggregates data from 202 countries between 1994 and 2014. The data set measures government human rights practices, meaning it does not measure the effects of non-state actors. (SOURCE <http://www.humanrightsdata.com/p/faq.html>) According to the CIRI project website, the data were primarily collected through annual analyses of the U.S. Department of State’s Country Reports on Human Rights Practices, along with supplemental research into Physical Integrity Rights from Amnesty International. A country’s report is typically between 20 and 75 pages. (SOURCE USDOS) Each “country-year” is assigned two trained coders, who closely read the reports to assign scores for the variables. If there are disagreements between coders, senior CIRI staff steps in to find a resolution. (SOURCE <http://www.humanrightsdata.com/p/faq.html>) In this project, we focus on key measures such as disappearances, political imprisonment, torture, freedom of speech, and women’s rights to better understand how these indicators vary across countries and regions over time. Our motivation is to compare state-level human rights performances, identify persistent violations, and explore potential drivers of changes in human rights. By grouping the countries by the United Nations geoscheme, our project will also explore cross-regional disparities and trends.
+
+### Data Cleaning and Filtering
+Given our aim, we decided to remove the following variables after reading through the variable code definitions from the data base. The code is shown below:
+
+```{r}
+ciri_data <- read_csv("data/dataverse_files/CIRI Data 1981_2011 2014.04.14.csv") 
+
+#Removing unnecessary variables from data set
+df <- ciri_data %>% 
+  select(-c(COW, 
+            POLITY, 
+            UNSUBREG,
+            PHYSINT,
+            OLD_EMPINX,
+            NEW_EMPINX,
+            ASSN,
+            FORMOV,
+            DOMMOV,
+            OLD_MOVE,
+            SPEECH,
+            ELECSD,
+            OLD_RELFRE,
+            NEW_RELFRE,
+            WORKER,
+            WOSOC,
+            INJUD)) 
+```
+
+The following code works to delete rows with NA's (missing values) and duplicated rows (there weren't any but we still renamed the variable):
+
+```{r}
+# Checking for number of NA's in each variable and deleting rows with NA's
+print(colSums(is.na(df))) 
+df_full <- na.omit(df) 
+
+# Checking for duplicates within variables and duplicate rows
+print(sum(duplicated(df_full))) 
+df_no_dups <- distinct(df_full) 
+```
+
+### Visualized the distribution of some of these variables and calculated some core tendency measures.
+
+Creating Necessary Variables for Analysis (decade, continent)
+
+```{r}
+# Making missing code, periods of interregnum, and occupation NAs
+df_no_dups[df_no_dups == -999] <- NA
+df_no_dups[df_no_dups == -77]  <- NA
+df_no_dups[df_no_dups == -66]  <- NA
+
+# Creating decade variable 
+df_decade_region <- df_no_dups %>% 
+  mutate(DECADE = floor(YEAR/10)*10)
+
+# Map UNREG codes to continent/region names
+region_map <- tibble(
+  UNREG = c(2, 9, 419, 21, 142, 150),
+  CONT = c("Africa", "Oceania", "South & Central America", "North America" , "Asia", "Europe") 
+) 
+
+# Combining the two tables
+df_decade_region <- df_decade_region %>%
+  left_join(region_map, by = "UNREG")
+
+# Getting rid of duplicate column and renaming `CONT.x`
+df_decade_region$CONT.y <- NULL
+
+names(df_decade_region)[names(df_decade_region) == "CONT.x"] <- "CONT"
+
+df_decade_region
+```
+
+The addition of these two variables allows us to create sensible categories to view some of our data. The `DECADE` category will group the `YEAR` column into digestible 10 year chunks that will enable us to view how the human rights indicators change across time. The `CONT` variable will enable us to view changes not only by country, but also across the UN determined geoscheme determined by the variable `UNREG`. By creating these two variables, there will be more options of analyzing the data by these different categories.
+
+### **Calculating Core Tendencies**
+
+```{r}
+# Creating list of human rights indicators 
+key_vars <- c("DISAP", "KILL", "POLPRIS", "TORT", "WECON", "WOPOL")
+
+# Mean of indicators over country
+avg_indicators_ctry <- df_decade_region %>%
+  group_by(CTRY) %>%
+  summarise(across(all_of(key_vars), mean, na.rm = TRUE), .groups = "drop")
+
+head(avg_indicators_ctry)
+```
+
+```{r}
+# Mean of indicators over UN continental regions
+avg_indicators_cont <- df_decade_region %>%
+  group_by(CONT) %>%
+  summarise(across(all_of(key_vars), mean, na.rm = TRUE), .groups = "drop")
+
+avg_indicators_cont
+```
+
+```{r}
+# Mean of indicators grouped by decade 
+df_decade_avg <- df_decade_region %>%
+  group_by(DECADE) %>%
+  summarise(across(all_of(key_vars), mean, na.rm = TRUE), .groups = "drop")
+
+df_decade_avg
+```
+
+```{r}
+# Mean of indicators grouped by continent, country, and decade 
+df_continent_decade_avg <- df_decade_region %>%
+  group_by(CONT, CTRY, DECADE) %>%
+  summarise(across(all_of(key_vars), mean, na.rm = TRUE), .groups = "drop")
+
+head(df_continent_decade_avg)
+```
+
+Here, we find the average for the human rights indicators across the continent, country, and decade. Initially, we created a list of the key variables that we are analyzing, and then we grouped the data by country and decade before finding the mean across all indicators.
+
+### Comparing Human Rights Indicators Across Geoschemes
+
+Firstly, we created a function that would allow us to visualize and compare human rights indicators over a period of thirty years across the geoschemes (Asia, Africa, Europe, North America, Oceania, and South & Central America). For all variables except for `WECON` and `WEPOL,` values are all the categorical variables of 0, 1, and 2. **ZERO (0)** indicates that it occurs frequently, **ONE (1)** indicates occasionally, and **TWO (2)** indicates none in a given year. For `WECON` and `WEPOL,` values are categorical variables of 0, 1, 2, and 3. A **ZERO (0)** indicates that there were no rights and that systematic discrimination based on sex may have been built into law. A **ONE (1)** indicates some rights with no government enforcement, a **TWO (2)** indicates some rights and some government enforcement of these rights, and a **THREE (3)** indicates that all or close to all rights were guaranteed and the government fully enforces them. 
+
+```{r}
+plot_hr_indicator <- function(data, indicator, title_label) {
+  
+  data %>%
+    group_by(CONT, DECADE) %>%
+    summarize(avg_value = mean({{ indicator }}, na.rm = TRUE), .groups = "drop") %>%
+    ggplot(aes(x = DECADE, y = avg_value, color = CONT, group = CONT)) +
+    geom_line(size = 1.2) +
+    geom_point(size = 3) +
+    labs(
+      title = paste(title_label, "by Continent Over Time"),
+      x = "Decade",
+      y = paste("Average", title_label, "Value"),
+      color = "Continent"
+    ) +
+    theme_minimal(base_size = 9) 
+}
+```
+
+This function allows us to create the same graphs with different human rights indicators without repeating the code several times.
+
+```{r}
+plot_hr_indicator(df_continent_decade_avg, WECON, "Women's Economic Rights")
+```
+
+Text that explains
+
+```{r}
+plot_hr_indicator(df_continent_decade_avg, DISAP, "Disappearance")
+```
+
+Blurb and words
+
+```{r}
+plot_hr_indicator(df_continent_decade_avg, TORT, "Torture")
+```
+
+Words and Blurbs
+
+```{r}
+plot_hr_indicator(df_continent_decade_avg, POLPRIS, 
+                  "Political Imprisonment")
+```
+
+Yappa yappa
+
+```{r}
+plot_hr_indicator(df_continent_decade_avg, WOPOL, "Women's Political Rights")
+```
+
+### Comparing Human Rights Indicators within a Geoscheme
+
+```{r}
+plot_indicator_means <- function(data, continent, indicators) {
+  data %>%
+    filter(CONT == continent) %>%
+    select(CONT, all_of(indicators)) %>%
+    pivot_longer(cols = all_of(indicators), names_to = "Indicator", values_to = "Value") %>%
+    group_by(Indicator) %>%
+    summarize(Mean_Value = mean(Value, na.rm = TRUE)) %>%
+    ggplot(aes(x = reorder(Indicator, Mean_Value), y = Mean_Value, fill = Indicator)) +
+    geom_col() +
+    coord_flip() +
+    scale_y_continuous(limits = c(0, 2), breaks = 0:2) +
+    labs(
+      title = paste("Average Indicator Values in", continent),
+      x = "Human Rights Indicator",
+      y = "Mean",
+      fill = "Indicator"
+    ) +
+    theme_minimal(base_size = 10) +
+    theme(legend.position = "none")
+}
+```
+
+This function does this
+
+```{r}
+plot_indicator_means(
+  df_continent_decade_avg,
+  continent = "Africa",
+  indicators = key_vars
+)
+```
+
+```{r}
+plot_indicator_means(
+  df_continent_decade_avg,
+  continent = "Asia",
+  indicators = key_vars
+)
+```
+
+### Comparing a Human Rights Indicators over Countries in a Geoscheme
+
+```{r}
+
+plot_country_means <- function(data, continent, indicators) {
+  data %>%
+    filter(CONT == continent) %>%
+    group_by(CTRY) %>%
+    summarize(across(all_of(indicators), ~ mean(.x, na.rm = TRUE))) %>%
+    pivot_longer(cols = all_of(indicators), names_to = "Indicator", values_to = "Mean_Value") %>%
+    ggplot(aes(x = reorder(CTRY, Mean_Value), y = Mean_Value, fill = Indicator)) +
+    geom_col(position = "dodge") +
+    coord_flip() +
+    scale_y_continuous(limits = c(0, 2), breaks = 0:2) +
+    labs(
+      title = paste("Average Indicator Values by Country in", continent),
+      x = "Country",
+      y = "Mean (0–2 Scale)",
+      fill = "Indicator"
+    ) +
+    theme_minimal(base_size = 5)
+}
+
+# Can pick plot for continent and indicator 
+plot_country_means(df_continent_decade_avg, "Africa", 'WECON')
+```
