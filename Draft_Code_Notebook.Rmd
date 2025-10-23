@@ -16,14 +16,13 @@ library(tidyverse)
 
 The Cingranelli-Richards (CIRI) Human Rights Data Project is a collection of 15 quantitative human rights indicators, collected annually. This project explores the 2014 version of the data set, which aggregates data from 202 countries between 1994 and 2014. The data set measures government human rights practices, meaning it does not measure the effects of non-state actors. (SOURCE <http://www.humanrightsdata.com/p/faq.html>) According to the CIRI project website, the data were primarily collected through annual analyses of the U.S. Department of State’s Country Reports on Human Rights Practices, along with supplemental research into Physical Integrity Rights from Amnesty International. A country’s report is typically between 20 and 75 pages. (SOURCE USDOS) Each “country-year” is assigned two trained coders, who closely read the reports to assign scores for the variables. If there are disagreements between coders, senior CIRI staff steps in to find a resolution. (SOURCE <http://www.humanrightsdata.com/p/faq.html>) In this project, we focus on key measures such as disappearances, political imprisonment, torture, freedom of speech, and women’s rights to better understand how these indicators vary across countries and regions over time. Our motivation is to compare state-level human rights performances, identify persistent violations, and explore potential drivers of changes in human rights. By grouping the countries by the United Nations geoscheme, our project will also explore cross-regional disparities and trends.
 
-### Write some code to explore and show your reader the structure of your data set and the different variables involved, performing some initial data restructuring, filtering, and cleaning.
-
+### Data Cleaning and Filtering
 Given our aim, we decided to remove the following variables after reading through the variable code definitions from the data base. The code is shown below:
 
 ```{r}
 ciri_data <- read_csv("data/dataverse_files/CIRI Data 1981_2011 2014.04.14.csv") 
 
-#removing unnecessary variables from data set
+#Removing unnecessary variables from data set
 df <- ciri_data %>% 
   select(-c(COW, 
             POLITY, 
@@ -90,7 +89,7 @@ df_decade_region
 
 The addition of these two variables allows us to create sensible categories to view some of our data. The `DECADE` category will group the `YEAR` column into digestible 10 year chunks that will enable us to view how the human rights indicators change across time. The `CONT` variable will enable us to view changes not only by country, but also across the UN determined geoscheme determined by the variable `UNREG`. By creating these two variables, there will be more options of analyzing the data by these different categories.
 
-Calculating Core Tendencies
+### **Calculating Core Tendencies**
 
 ```{r}
 # Creating list of human rights indicators 
@@ -135,7 +134,7 @@ Here, we find the average for the human rights indicators across the continent, 
 
 ### Comparing Human Rights Indicators Across Geoschemes
 
-Firstly, we created a function that would allow us to visualize and compare human rights indicators over a period of thirty years across the geoschemes (Asia, Africa, Europe, North America, Oceania, and South & Central America). These values are all the categorical variables of 0, 1, and 2. **ZERO (0)** indicates that it occurs frequently, **ONE (1)** indicates occasionally, and **TWO (2)** indicates none in a given year.
+Firstly, we created a function that would allow us to visualize and compare human rights indicators over a period of thirty years across the geoschemes (Asia, Africa, Europe, North America, Oceania, and South & Central America). For all variables except for `WECON` and `WEPOL,` values are all the categorical variables of 0, 1, and 2. **ZERO (0)** indicates that it occurs frequently, **ONE (1)** indicates occasionally, and **TWO (2)** indicates none in a given year. For `WECON` and `WEPOL,` values are categorical variables of 0, 1, 2, and 3. A **ZERO (0)** indicates that there were no rights and that systematic discrimination based on sex may have been built into law. A **ONE (1)** indicates some rights with no government enforcement, a **TWO (2)** indicates some rights and some government enforcement of these rights, and a **THREE (3)** indicates that all or close to all rights were guaranteed and the government fully enforces them. 
 
 ```{r}
 plot_hr_indicator <- function(data, indicator, title_label) {
@@ -255,6 +254,4 @@ plot_country_means <- function(data, continent, indicators) {
 
 # Can pick plot for continent and indicator 
 plot_country_means(df_continent_decade_avg, "Africa", 'WECON')
-
-
 ```
