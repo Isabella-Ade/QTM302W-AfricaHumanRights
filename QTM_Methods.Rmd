@@ -12,6 +12,100 @@ knitr::opts_chunk$set(echo = TRUE)
 ## R Markdown
 
 ```{r}
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
+```
 
+```{r}
+ciri_data <- read_csv("data/dataverse_files/CIRI Data 1981_2011 2014.04.14.csv") 
+
+#Removing unnecessary variables from data set
+df <- ciri_data %>% 
+  select(-c(DISAP,
+            UNCTRY,
+            CIRI,
+            KILL, 
+            POLPRIS,
+            COW, 
+            TORT,
+            UNSUBREG, 
+            POLITY,
+            OLD_EMPINX,
+            NEW_EMPINX,
+            ASSN,
+            FORMOV,
+            DOMMOV,
+            OLD_MOVE,
+            SPEECH,
+            ELECSD,
+            OLD_RELFRE,
+            NEW_RELFRE,
+            WORKER,
+            WOSOC,
+            INJUD)) 
+```
+
+
+```{r}
+# Checking for number of NA's in each variable and deleting rows with NA's
+print(colSums(is.na(df))) 
+df_full <- na.omit(df) 
+
+# Checking for duplicates within variables and duplicate rows
+print(sum(duplicated(df_full))) 
+df_no_dups <- distinct(df_full) 
+
+```
+
+```{r}
+# Making missing code, periods of interregnum, and occupation NAs
+df_no_dups[df_no_dups == -999] <- NA
+df_no_dups[df_no_dups == -77]  <- NA
+df_no_dups[df_no_dups == -66]  <- NA
+
+# Creating decade variable 
+df_decade_region <- df_no_dups %>% 
+  mutate(DECADE = floor(YEAR/10)*10)
+
+# Map UNREG codes to continent/region names
+region_map <- tibble(
+  UNREG = c(2, 9, 419, 21, 142, 150),
+  CONT = c("Africa", "Oceania", "South & Central America", "North America" , "Asia", "Europe") 
+) 
+
+# Combining the two tables
+df_decade_region <- df_decade_region %>%
+  left_join(region_map, by = "UNREG")
+
+# Getting rid of duplicate column and renaming `CONT.x`
+df_decade_region$CONT.y <- NULL
+
+names(df_decade_region)[names(df_decade_region) == "CONT.x"] <- "CONT"
+
+df_decade_region
+```
+
+```{r}
+df_africa <- df_decade_region %>% 
+  filter(CONT == 'Africa')
+
+df_africa
+```
+
+```{r}
+island_list <- c("Madagascar", "Comoros",
+         "Mauritius", "Seychelles", "Cape Verde", "Sao Tome and Principe")
+
+df_africa_cont <- df_africa %>% 
+  filter(CTRY != island_list)
+
+df_africa_cont
+```
+```{r}
+df_islands <- df_africa %>%
+  filter(CTRY == island_list)
+
+df_islands
 ```
 
