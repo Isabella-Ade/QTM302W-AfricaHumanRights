@@ -1,0 +1,17 @@
+---
+title: "QTM302W Methods Section"
+author: "Isabella Adeola, Hank Standaert, Christina Dai"
+date: "2025-11-06"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+```{r}
+
+```
+
