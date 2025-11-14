@@ -15,6 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
 library(tidyverse)
 library(ggplot2)
+library(kableExtra)
 ```
 
 ```{r}
@@ -87,25 +88,55 @@ df_decade_region
 ```
 
 ```{r}
+# Creating data frame for just Africa
 df_africa <- df_decade_region %>% 
   filter(CONT == 'Africa')
 
-df_africa
+head(df_africa)
 ```
 
+
 ```{r}
+# Creating data frame for just continental countries
 island_list <- c("Madagascar", "Comoros",
          "Mauritius", "Seychelles", "Cape Verde", "Sao Tome and Principe")
 
 df_africa_cont <- df_africa %>% 
   filter(CTRY != island_list)
 
-df_africa_cont
+head(df_africa_cont)
 ```
 ```{r}
+# Creating data frame for just African island nations
 df_islands <- df_africa %>%
   filter(CTRY == island_list)
 
-df_islands
+head(df_islands)
+```
+```{r}
+# Reading new data set 
+africa_popgdp <- read_csv("data/africa_popgdp.csv") 
+
+head(africa_popgdp)
+```
+
+```{r}
+africa_cont_joined <- df_africa_cont %>% 
+  left_join(africa_popgdp, by = c("CTRY", "YEAR")) %>%
+   group_by(DECADE) %>%
+  fill(AREA, URBPOP, TPOP, GDP, .direction = "downup") %>%
+  ungroup()
+
+head(africa_cont_joined)
+```
+
+```{r}
+islands_joined <- df_islands %>% 
+  left_join(africa_popgdp, by = c("CTRY", "YEAR")) %>%
+   group_by(DECADE) %>%
+  fill(AREA, URBPOP, TPOP, GDP, .direction = "downup") %>%
+  ungroup()
+
+head(islands_joined)
 ```
 
