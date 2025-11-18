@@ -120,24 +120,23 @@ africa_popgdp <- read_csv("data/africa_popgdp.csv")
 head(africa_popgdp)
 ```
 
+
+```{r}
+names(africa_popgdp)[names(africa_popgdp) == "YEAR"] <- "DECADE"
+```
+
 ```{r}
 africa_cont_joined <- df_africa_cont %>% 
-  left_join(africa_popgdp, by = c("CTRY", "YEAR")) %>%
-   group_by(DECADE) %>%
-  fill(AREA, URBPOP, TPOP, GDP, .direction = "downup") %>%
-  ungroup()
+  left_join(africa_popgdp, by = c("CTRY", "DECADE")) 
 
-head(africa_cont_joined)
+africa_cont_joined
 ```
 
 ```{r}
 islands_joined <- df_islands %>% 
-  left_join(africa_popgdp, by = c("CTRY", "YEAR")) %>%
-   group_by(DECADE) %>%
-  fill(AREA, URBPOP, TPOP, GDP, .direction = "downup") %>%
-  ungroup()
+  left_join(africa_popgdp, by = c("CTRY", "DECADE"))
 
-head(islands_joined)
+islands_joined
 ```
 
 After reviewing the data set for our island_joined information, we chose to only keep the data after 2000 since any data that was before that year was missing/ full of NAs. 
