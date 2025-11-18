@@ -115,7 +115,7 @@ head(df_islands)
 ```
 ```{r}
 # Reading new data set 
-africa_popgdp <- read_csv("data/africa_popgdp.csv") 
+africa_popgdp <- read_csv("data/dataverse_files/africa_popgdp.csv") 
 
 head(africa_popgdp)
 ```
