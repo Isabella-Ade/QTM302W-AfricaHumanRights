@@ -140,3 +140,24 @@ islands_joined <- df_islands %>%
 head(islands_joined)
 ```
 
+After reviewing the data set for our island_joined information, we chose to only keep the data after 2000 since any data that was before that year was missing/ full of NAs. 
+```{r}
+island_join_clean <- na.omit(islands_joined)
+
+summary_df <- island_join_clean %>%
+  group_by(CTRY) %>%
+  summarize(
+    mean_WECON = mean(WECON, na.rm = TRUE)
+  )
+
+ggplot(summary_df,
+       aes(x = CTRY, y = mean_WECON)) +
+  geom_bar(stat = "identity", fill = "lightpink") +
+  facet_wrap(~ CTRY, scales = "free_x") +
+  labs(
+    x = "Island Country",
+    y = "Average WECON Score"
+  ) +
+  theme_minimal() 
+```
+
