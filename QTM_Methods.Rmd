@@ -1,6 +1,6 @@
 ---
 title: "QTM302W Methods Section"
-author: "Isabella Adeola, Hank Standaert, Christina Dai"
+author: "Isabella Adeola, Christina Dai, Hank Standaert"
 date: "2025-11-06"
 output: html_document
 ---
@@ -168,7 +168,8 @@ ggplot(combined_df, aes(x = YEAR, y = PHYSINT, color = region)) +
   theme_minimal() +
   scale_color_manual(values = c("Island Nations" = "steelblue", "Mainland Africa" = "darkorange"))
 ```
-[enter interpretation here, making sure to mention the huge fluctuations for island nations]
+  
+  [enter interpretation here, making sure to mention the huge fluctuations for island nations]
 
 ### Comparing the Differences in Women's Political and Economic Rights Between Island Nations and Mainland by Decades  
 ### WECON Comparison
@@ -201,7 +202,8 @@ ggplot(mean_rights, aes(x = factor(DECADE), y = Mean_Score, fill = region)) +
   theme_minimal() +
   scale_fill_manual(values = c("Island Nations" = "steelblue", "Mainland Africa" = "darkorange"))
 ```
-[enter interpretation here]
+  
+  [enter interpretation here]
 
 ### Exploring Influential Factors Contributing to Women's Economic Rights Between the Island Nations  
 We hypothesized that GDP, as a measure of a nation’s economic status, would be associated with women’s economic rights (WECON).  
@@ -221,14 +223,16 @@ ggplot(summary_df, aes(x = reorder(CTRY, mean_GDP), y = mean_WECON, fill = mean_
   coord_flip() +
   theme_minimal()
 ```
-From the visualization, there is no clear indication of any sort of trend/ correlation between the two variables of interests so we pivotted to a linear regression model. 
+  
+  From the visualization, there is no clear indication of any sort of trend/ correlation between the two variables of interests so we pivotted to a linear regression model. 
 
 ```{r}
 # Linear Regression Model
 model1 <- lm(WECON ~ GDP + TPOP + URBPOP + AREA + TPOP*GDP, data = islands_joined)
 summary(model1)
 ```
-The multiple linear regression model examined the effects of GDP, total population (TPOP), urban population (URBPOP), land area (AREA), and the interaction between GDP and TPOP on WECON scores. The overall model was not statistically significant (F(5,12) = 2.08, p = 0.1386), and explained approximately only 24% of the variance in WECON scores after adjusting for the number of predictors (Adjusted R² = 0.2411).  
+  
+  The multiple linear regression model examined the effects of GDP, total population (TPOP), urban population (URBPOP), land area (AREA), and the interaction between GDP and TPOP on WECON scores. The overall model was not statistically significant (F(5,12) = 2.08, p = 0.1386), and explained approximately only 24% of the variance in WECON scores after adjusting for the number of predictors (Adjusted R² = 0.2411).  
 
 Individually, most predictors, including GDP, TPOP, URBPOP, and AREA, were not statistically significant (p > 0.05). However, the interaction term GDP:TPOP was significant (p = 0.0472), suggesting that the combined effect of GDP and population may influence WECON scores even though the main effects alone are not significant.  
 
@@ -253,7 +257,8 @@ ggplot(summary_df2, aes(x = reorder(CTRY, mean_TPOP), y = mean_WOPOL, fill = mea
   coord_flip() +
   theme_minimal()
 ```
-We cannot say for sure that there is a definitive correlation from this visual, but there does seem to be a trend where the smaller populations have generally higher women political rights. 
+  
+  We cannot say for sure that there is a definitive correlation from this visual, but there does seem to be a trend where the smaller populations have generally higher women political rights. 
   
 To check if there is a correlation, we conducted a multiple linear regression to examine the effects of GDP, total population (TPOP), urban population (URBPOP), land area (AREA), and the interaction between TPOP and AREA on women’s political rights (WOPOL) in island nations.  
 ```{r}
@@ -261,7 +266,8 @@ To check if there is a correlation, we conducted a multiple linear regression to
 model2 <- lm(WOPOL ~ GDP + TPOP + URBPOP + AREA + TPOP*AREA, data = islands_joined)
 summary(model2)
 ``` 
-The overall model was not statistically significant (F(5,12) = 1.873, p = 0.173), explaining approximately only 20% of the variance in WOPOL scores after adjusting for the number of predictors (Adjusted R² = 0.2043).  
+  
+  The overall model was not statistically significant (F(5,12) = 1.873, p = 0.173), explaining approximately only 20% of the variance in WOPOL scores after adjusting for the number of predictors (Adjusted R² = 0.2043).  
 
 Individually, none of the predictors—including GDP, TPOP, URBPOP, AREA, and the TPOP:AREA interaction—were statistically significant at the 0.05 level. The interaction term (TPOP:AREA) had the lowest p-value (p = 0.180), suggesting a possible, though non-significant, combined effect of population and land area on women’s political rights.  
 
