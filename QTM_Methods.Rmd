@@ -16,6 +16,7 @@ library(dplyr)
 library(tidyverse)
 library(ggplot2)
 library(kableExtra)
+library(gridExtra)
 ```
 
 ```{r}
@@ -224,7 +225,7 @@ ggplot(summary_df, aes(x = reorder(CTRY, mean_GDP), y = mean_WECON, fill = mean_
   theme_minimal()
 ```
   
-  From the visualization, there is no clear indication of any sort of trend/ correlation between the two variables of interests so we pivotted to a linear regression model. 
+  From the visualization, there is no clear indication of any sort of trend/ correlation between the two variables of interests so we pivoted to a linear regression model. 
 
 ```{r}
 # Linear Regression Model
@@ -272,3 +273,39 @@ summary(model2)
 Individually, none of the predictors—including GDP, TPOP, URBPOP, AREA, and the TPOP:AREA interaction—were statistically significant at the 0.05 level. The interaction term (TPOP:AREA) had the lowest p-value (p = 0.180), suggesting a possible, though non-significant, combined effect of population and land area on women’s political rights.  
 
 Overall, these results indicate that, based on this dataset, there is no strong evidence that GDP, population size, urbanization, land area, or their interaction significantly predict women’s political rights in island nations.  
+
+### Exploring Influential Factors Contributing PHYSINT Between the Island Nations  
+  
+Next, we wanted to explore if there were any correlations for variables within island nations to PHYSINT. We ran a multiple variable linear regression and after testing out multiple different variable interaction combinations, we were able to identify our most significant result with the following model:  
+```{r}
+# Linear Regression Model 3
+model3 <- lm(PHYSINT ~ GDP + TPOP + URBPOP + AREA + AREA*URBPOP, data = islands_joined)
+summary(model3) 
+```
+  
+The model significantly predicts PHYSINT and explains about 67% of its variation, but none of the individual predictors or the AREA × URBPOP interaction are statistically significant as shown by their low p-values.  
+GDP and URBPOP come close to significance, suggesting they may have some influence, but the evidence is too weak to draw firm conclusions. The non-significant interaction means that urban population does not affect PHYSINT differently depending on a country's land area. Overall, the model fits reasonably well, but it cannot identify any strong, reliable predictors of PHYSINT from these variables.  
+
+```{r}
+
+# GDP
+p1 <- ggplot(islands_joined, aes(x = GDP, y = PHYSINT)) +
+  geom_point(size = 3, color = "steelblue") +
+  geom_smooth(method = "lm", se = TRUE, color = "red", linewidth = 1) +
+  labs(title = "PHYSINT vs GDP",
+       x = "GDP",
+       y = "PHYSINT") +
+  theme_minimal()
+
+# Urban Population
+p2 <- ggplot(islands_joined, aes(x = URBPOP, y = PHYSINT)) +
+  geom_point(size = 3, color = "darkmagenta") +
+  geom_smooth(method = "lm", se = TRUE, color = "red", linewidth = 1) +
+  labs(title = "PHYSINT vs Urban Population",
+       x = "Urban Population",
+       y = "PHYSINT") +
+  theme_minimal()
+
+grid.arrange(p1, p2, ncol = 2) 
+```
+  Plots of the two variable interactions that show slight significance. 
