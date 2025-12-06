@@ -32,16 +32,9 @@ This phenonmena led to project objectives: the examination of how human rights p
 ## Getting Started
 
 1. Clone this repo (for help see this [tutorial](https://help.github.com/articles/cloning-a-repository/)).
-2. Raw Data is being kept [here](Repo folder containing raw data) within this repo.
-
-    *If using offline data mention that and how they may obtain the data from the froup)*
-    
-3. Data processing/transformation scripts are being kept [here](Repo folder containing data processing scripts/notebooks)
+2. Raw Data is being kept [here](data) within this repo.    
+3. Data processing/transformation scripts are being kept [here](processing_files). This includes the exploratory data analysis and the resulting methods/regression analysis. 
 4. etc...
-
-*If your project is well underway and setup is fairly complicated (ie. requires installation of many packages) create another "setup.md" file and link to it here*  
-
-5. Follow setup [instructions](Link to file)
 
 ## Featured Notebooks/Analysis/Deliverables
 * [Final Presentation Slide Deck](https://www.canva.com/design/DAG4m_r5J6A/Q6H31-i1aBazY3jZXD_MVg/view?utm_content=DAG4m_r5J6A&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h6afd4a0708)
