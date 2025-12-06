@@ -47,3 +47,13 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# DS Store
+.DS_store
+
+# History files
+.Rhistory
+.Rapp.history
+
+
+
