@@ -48,12 +48,20 @@ po/*~
 # RStudio Connect folder
 rsconnect/
 
-# DS Store
+# macOS junk
 .DS_Store
 
-# History files
+# R/RStudio junk
 .Rhistory
 .Rapp.history
+.RData
+.Rproj.user/
+
+# Compiled stuff
+*.html
+*.utf8.md
+*.knit.md
+
 
 
 
