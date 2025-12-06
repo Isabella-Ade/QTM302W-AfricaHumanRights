@@ -62,6 +62,11 @@ rsconnect/
 *.utf8.md
 *.knit.md
 
+# R Markdown output
+*.html
+*.pdf
+*.docx
+*_files/
 
 
 
