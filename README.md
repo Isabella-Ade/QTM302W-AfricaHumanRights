@@ -34,13 +34,11 @@ This phenonmena led to project objectives: the examination of how human rights p
 1. Clone this repo (for help see this [tutorial](https://help.github.com/articles/cloning-a-repository/)).
 2. Raw Data is being kept [here](data) within this repo.    
 3. Data processing/transformation scripts are being kept [here](processing_files). This includes the exploratory data analysis and the resulting methods/regression analysis. 
-4. etc...
 
 ## Featured Notebooks/Analysis/Deliverables
+* [EDA Code Notebook](processing_files/QTM302W_CodeNotebook.Rmd)
+* [Methods Notebook](processing_files/QTM_Methods)
 * [Final Presentation Slide Deck](https://www.canva.com/design/DAG4m_r5J6A/Q6H31-i1aBazY3jZXD_MVg/view?utm_content=DAG4m_r5J6A&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h6afd4a0708)
-* [Notebook/Markdown/Slide DeckTitle](link)
-* [Blog Post](link)
-
 
 ## Contributing Project Members
 
