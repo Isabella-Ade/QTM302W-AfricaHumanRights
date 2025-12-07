@@ -15,7 +15,6 @@ This phenonmena led to project objectives: the examination of how human rights p
 
 ### Technologies
 * R
-* HTML
 
 ## Project Description
 * Data:
@@ -25,9 +24,10 @@ This phenonmena led to project objectives: the examination of how human rights p
 * Research Question: What potential influencing factors within the island nations are the best predictors of WECON, WOPOL, and PHYSINT scores?
 * Hypothesis: We expect a correlation between island nations’ economic status with women’s economic scores, and a correlation between population size with women’s political rights scores.
 
-## Needs of this project
+## Needs of this project & Next Steps
 
-- As of 12/09/2025, project status is **COMPLETED**
+* As of 12/09/2025, project status is **COMPLETED**
+* More robust data for African nations and further analyzation of indicators within island nations and across the continent. Case studies focusing on certain island nations or comparing an island to a continental country. 
 
 ## Getting Started
 
@@ -39,6 +39,32 @@ This phenonmena led to project objectives: the examination of how human rights p
 * [EDA Code Notebook](processing_files/QTM302W_CodeNotebook.Rmd)
 * [Methods Notebook](processing_files/QTM_Methods)
 * [Final Presentation Slide Deck](https://www.canva.com/design/DAG4m_r5J6A/Q6H31-i1aBazY3jZXD_MVg/view?utm_content=DAG4m_r5J6A&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h6afd4a0708)
+
+## Repository Structure 
+```
+.
+
+├── data/
+
+  │ ├── CIRI_data/
+
+  │ └── africapolis_data/
+
+├── processing_files/
+
+  │ ├── QTM302W_CodeNotebook.Rmd
+
+  │ └── QTM_Methods.Rmd
+
+├── .gitattributes
+
+├── .gitignore
+
+├── QTM302W-Group_Project.Rproj
+
+└── README.md
+
+```
 
 ## Contributing Project Members
 
