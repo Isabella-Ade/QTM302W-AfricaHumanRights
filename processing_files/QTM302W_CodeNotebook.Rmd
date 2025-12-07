@@ -9,7 +9,8 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-
+library(here)
+library(readr)
 library(dplyr)
 library(tidyverse)
 library(kableExtra)
@@ -30,7 +31,7 @@ We selected the CIRI Human Rights Data Project because it offers both analytical
 Given our aim, we decided to narrow our analysis by removing the following variables.
 
 ```{r, message=FALSE}
-ciri_data <- read_csv("data/dataverse_files/CIRI Data 1981_2011 2014.04.14.csv") 
+ciri_data <- read_csv(here("data", "CIRI_data", "CIRI_data_raw.csv")) 
 
 # Removing unnecessary variables from dataset
 df <- ciri_data %>% 

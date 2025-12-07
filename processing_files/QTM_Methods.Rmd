@@ -12,6 +12,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ## R Markdown
 
 ```{r}
+library(readr)
+library(here)
 library(dplyr)
 library(tidyverse)
 library(ggplot2)
@@ -20,7 +22,7 @@ library(gridExtra)
 ```
 
 ```{r}
-ciri_data <- read_csv("data/CIRI_data/CIRI Data 1981_2011 2014.04.14.csv") 
+ciri_data <- read_csv(here("data", "CIRI_data", "CIRI_data_raw.csv")) 
 
 #Removing unnecessary variables from data set
 df <- ciri_data %>% 
@@ -47,7 +49,6 @@ df <- ciri_data %>%
             WOSOC,
             INJUD)) 
 ```
-
 
 ```{r}
 # Checking for number of NA's in each variable and deleting rows with NA's
@@ -96,7 +97,6 @@ df_africa <- df_decade_region %>%
 head(df_africa)
 ```
 
-
 ```{r}
 # Creating data frame for just continental countries
 island_list <- c("Madagascar", "Comoros",
@@ -107,6 +107,7 @@ df_africa_cont <- df_africa %>%
 
 head(df_africa_cont)
 ```
+
 ```{r}
 # Creating data frame for just African island nations
 df_islands <- df_africa %>%
@@ -114,13 +115,13 @@ df_islands <- df_africa %>%
 
 head(df_islands)
 ```
+
 ```{r}
 # Reading new data set 
-africa_popgdp <- read_csv("data/africapolis_data/africa_popgdp.csv") 
+africa_popgdp <- read_csv(here("data", "africapolis_data", "africa_popgdp.csv")) 
 
 head(africa_popgdp)
 ```
-
 
 ```{r}
 names(africa_popgdp)[names(africa_popgdp) == "YEAR"] <- "DECADE"
@@ -140,11 +141,13 @@ islands_joined <- df_islands %>%
 islands_joined
 ```
 
-After reviewing the data set for our island_joined information, we chose to only keep the data after 2000 since any data that was before that year was missing/ full of NAs. 
+After reviewing the data set for our island_joined information, we chose to only keep the data after 2000 since any data that was before that year was missing/ full of NAs.
 
-### Comparing the Differences in PHYSINT Between Island Nations and Mainland by Years 
-PHYSINT: Physical Integrity Rights Index  
-This is an index constructed from the Torture, Extrajudicial Killing, Political Imprisonment, and Disappearance indicators. It ranges from 0 (no government respect for these four rights) to 8 (full government respect for these four rights).  
+### Comparing the Differences in PHYSINT Between Island Nations and Mainland by Years
+
+PHYSINT: Physical Integrity Rights Index\
+This is an index constructed from the Torture, Extrajudicial Killing, Political Imprisonment, and Disappearance indicators. It ranges from 0 (no government respect for these four rights) to 8 (full government respect for these four rights).
+
 ```{r}
 #creating a new category for each data set then combining them
 islands_joined <- islands_joined %>% 
@@ -169,11 +172,13 @@ ggplot(combined_df, aes(x = YEAR, y = PHYSINT, color = region)) +
   theme_minimal() +
   scale_color_manual(values = c("Island Nations" = "steelblue", "Mainland Africa" = "darkorange"))
 ```
-  
-  [enter interpretation here, making sure to mention the huge fluctuations for island nations]
 
-### Comparing the Differences in Women's Political and Economic Rights Between Island Nations and Mainland by Decades  
+[enter interpretation here, making sure to mention the huge fluctuations for island nations]
+
+### Comparing the Differences in Women's Political and Economic Rights Between Island Nations and Mainland by Decades
+
 ### WECON Comparison
+
 ```{r}
 #Capturing the Average Scores from Data Set
 mean_rights <- combined_df %>%
@@ -203,13 +208,15 @@ ggplot(mean_rights, aes(x = factor(DECADE), y = Mean_Score, fill = region)) +
   theme_minimal() +
   scale_fill_manual(values = c("Island Nations" = "steelblue", "Mainland Africa" = "darkorange"))
 ```
-  
-  [enter interpretation here]
 
-### Exploring Influential Factors Contributing to Women's Economic Rights Between the Island Nations  
-We hypothesized that GDP, as a measure of a nation’s economic status, would be associated with women’s economic rights (WECON).  
-  
+[enter interpretation here]
+
+### Exploring Influential Factors Contributing to Women's Economic Rights Between the Island Nations
+
+We hypothesized that GDP, as a measure of a nation’s economic status, would be associated with women’s economic rights (WECON).
+
 To explore this, we averaged the WECON scores over time for each island nation and plotted them against the corresponding average GDP values across the decades, arranged in ascending order of GDP. This visualization allowed us to examine whether higher economic status corresponded to greater women’s economic rights.
+
 ```{r}
 summary_df <- islands_joined %>%
   group_by(CTRY) %>%
@@ -224,25 +231,26 @@ ggplot(summary_df, aes(x = reorder(CTRY, mean_GDP), y = mean_WECON, fill = mean_
   coord_flip() +
   theme_minimal()
 ```
-  
-  From the visualization, there is no clear indication of any sort of trend/ correlation between the two variables of interests so we pivoted to a linear regression model. 
+
+From the visualization, there is no clear indication of any sort of trend/ correlation between the two variables of interests so we pivoted to a linear regression model.
 
 ```{r}
 # Linear Regression Model
 model1 <- lm(WECON ~ GDP + TPOP + URBPOP + AREA + TPOP*GDP, data = islands_joined)
 summary(model1)
 ```
-  
-  The multiple linear regression model examined the effects of GDP, total population (TPOP), urban population (URBPOP), land area (AREA), and the interaction between GDP and TPOP on WECON scores. The overall model was not statistically significant (F(5,12) = 2.08, p = 0.1386), and explained approximately only 24% of the variance in WECON scores after adjusting for the number of predictors (Adjusted R² = 0.2411).  
 
-Individually, most predictors, including GDP, TPOP, URBPOP, and AREA, were not statistically significant (p > 0.05). However, the interaction term GDP:TPOP was significant (p = 0.0472), suggesting that the combined effect of GDP and population may influence WECON scores even though the main effects alone are not significant.  
+The multiple linear regression model examined the effects of GDP, total population (TPOP), urban population (URBPOP), land area (AREA), and the interaction between GDP and TPOP on WECON scores. The overall model was not statistically significant (F(5,12) = 2.08, p = 0.1386), and explained approximately only 24% of the variance in WECON scores after adjusting for the number of predictors (Adjusted R² = 0.2411).
 
-Overall, while GDP alone does not appear to significantly predict WECON scores, its interaction with population may play a meaningful role, highlighting the importance of considering combined socio-economic factors.  
+Individually, most predictors, including GDP, TPOP, URBPOP, and AREA, were not statistically significant (p \> 0.05). However, the interaction term GDP:TPOP was significant (p = 0.0472), suggesting that the combined effect of GDP and population may influence WECON scores even though the main effects alone are not significant.
 
-### Exploring Influential Factors Contributing to Women's Political Rights Between the Island Nations  
-We hypothesized that an island nation’s population size might influence women’s political rights (WOPOL). For example, in smaller populations, each individual’s opinion may carry more weight, potentially giving women greater influence in government.  
+Overall, while GDP alone does not appear to significantly predict WECON scores, its interaction with population may play a meaningful role, highlighting the importance of considering combined socio-economic factors.
 
-To explore this, we averaged WOPOL scores over time for each island nation and plotted them against the corresponding average total population (TPOP) across the decades, arranged in ascending order of TPOP. This visualization allowed us to examine whether smaller populations were associated with higher women’s political rights.  
+### Exploring Influential Factors Contributing to Women's Political Rights Between the Island Nations
+
+We hypothesized that an island nation’s population size might influence women’s political rights (WOPOL). For example, in smaller populations, each individual’s opinion may carry more weight, potentially giving women greater influence in government.
+
+To explore this, we averaged WOPOL scores over time for each island nation and plotted them against the corresponding average total population (TPOP) across the decades, arranged in ascending order of TPOP. This visualization allowed us to examine whether smaller populations were associated with higher women’s political rights.
 
 ```{r}
 summary_df2 <- islands_joined %>%
@@ -258,33 +266,35 @@ ggplot(summary_df2, aes(x = reorder(CTRY, mean_TPOP), y = mean_WOPOL, fill = mea
   coord_flip() +
   theme_minimal()
 ```
-  
-  We cannot say for sure that there is a definitive correlation from this visual, but there does seem to be a trend where the smaller populations have generally higher women political rights. 
-  
-To check if there is a correlation, we conducted a multiple linear regression to examine the effects of GDP, total population (TPOP), urban population (URBPOP), land area (AREA), and the interaction between TPOP and AREA on women’s political rights (WOPOL) in island nations.  
+
+We cannot say for sure that there is a definitive correlation from this visual, but there does seem to be a trend where the smaller populations have generally higher women political rights.
+
+To check if there is a correlation, we conducted a multiple linear regression to examine the effects of GDP, total population (TPOP), urban population (URBPOP), land area (AREA), and the interaction between TPOP and AREA on women’s political rights (WOPOL) in island nations.
+
 ```{r}
 # Linear Regression Model 2
 model2 <- lm(WOPOL ~ GDP + TPOP + URBPOP + AREA + TPOP*AREA, data = islands_joined)
 summary(model2)
-``` 
-  
-  The overall model was not statistically significant (F(5,12) = 1.873, p = 0.173), explaining approximately only 20% of the variance in WOPOL scores after adjusting for the number of predictors (Adjusted R² = 0.2043).  
+```
 
-Individually, none of the predictors—including GDP, TPOP, URBPOP, AREA, and the TPOP:AREA interaction—were statistically significant at the 0.05 level. The interaction term (TPOP:AREA) had the lowest p-value (p = 0.180), suggesting a possible, though non-significant, combined effect of population and land area on women’s political rights.  
+The overall model was not statistically significant (F(5,12) = 1.873, p = 0.173), explaining approximately only 20% of the variance in WOPOL scores after adjusting for the number of predictors (Adjusted R² = 0.2043).
 
-Overall, these results indicate that, based on this dataset, there is no strong evidence that GDP, population size, urbanization, land area, or their interaction significantly predict women’s political rights in island nations.  
+Individually, none of the predictors—including GDP, TPOP, URBPOP, AREA, and the TPOP:AREA interaction—were statistically significant at the 0.05 level. The interaction term (TPOP:AREA) had the lowest p-value (p = 0.180), suggesting a possible, though non-significant, combined effect of population and land area on women’s political rights.
 
-### Exploring Influential Factors Contributing PHYSINT Between the Island Nations  
-  
-Next, we wanted to explore if there were any correlations for variables within island nations to PHYSINT. We ran a multiple variable linear regression and after testing out multiple different variable interaction combinations, we were able to identify our most significant result with the following model:  
+Overall, these results indicate that, based on this dataset, there is no strong evidence that GDP, population size, urbanization, land area, or their interaction significantly predict women’s political rights in island nations.
+
+### Exploring Influential Factors Contributing PHYSINT Between the Island Nations
+
+Next, we wanted to explore if there were any correlations for variables within island nations to PHYSINT. We ran a multiple variable linear regression and after testing out multiple different variable interaction combinations, we were able to identify our most significant result with the following model:
+
 ```{r}
 # Linear Regression Model 3
 model3 <- lm(PHYSINT ~ GDP + TPOP + URBPOP + AREA + AREA*URBPOP, data = islands_joined)
 summary(model3) 
 ```
-  
-The model significantly predicts PHYSINT and explains about 67% of its variation, but none of the individual predictors or the AREA × URBPOP interaction are statistically significant as shown by their low p-values.  
-GDP and URBPOP come close to significance, suggesting they may have some influence, but the evidence is too weak to draw firm conclusions. The non-significant interaction means that urban population does not affect PHYSINT differently depending on a country's land area. Overall, the model fits reasonably well, but it cannot identify any strong, reliable predictors of PHYSINT from these variables.  
+
+The model significantly predicts PHYSINT and explains about 67% of its variation, but none of the individual predictors or the AREA × URBPOP interaction are statistically significant as shown by their low p-values.\
+GDP and URBPOP come close to significance, suggesting they may have some influence, but the evidence is too weak to draw firm conclusions. The non-significant interaction means that urban population does not affect PHYSINT differently depending on a country's land area. Overall, the model fits reasonably well, but it cannot identify any strong, reliable predictors of PHYSINT from these variables.
 
 ```{r}
 
@@ -308,4 +318,5 @@ p2 <- ggplot(islands_joined, aes(x = URBPOP, y = PHYSINT)) +
 
 grid.arrange(p1, p2, ncol = 2) 
 ```
-  Plots of the two variable interactions that show slight significance. 
+
+Plots of the two variable interactions that show slight significance.
