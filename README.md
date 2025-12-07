@@ -56,6 +56,8 @@ This phenonmena led to project objectives: the examination of how human rights p
 
   │ └── QTM_Methods.Rmd
 
+├── renv/
+
 ├── .gitattributes
 
 ├── .gitignore
