@@ -10,6 +10,7 @@ This purpose of this project is the examination of how human rights protections 
 * Descriptive Analysis
 * Data Visualization
 * Regression Analysis
+* Predictive Modeling
 
 ### Technologies
 * R
@@ -74,7 +75,7 @@ This purpose of this project is the examination of how human rights protections 
 |---------|-----------------|
 |[Isabella Adeola](https://github.com/[Isabella-Ade])| isabella.adeola@emory.edu   |
 |[Christina Dai](https://github.com/[chris-tinad])| christina.dai2@emory.edu   |
-|[Hank Standaert](https://github.com/[hankstandaert]) |     hank.standaert@emory.edu    |
+|[Hank Standaert](https://github.com/[hankstandaert]) | hank.standaert@emory.edu  |
 
 ## Contact
 * Feel free to contact any of the project members with any questions or if you are interested in contributing!
