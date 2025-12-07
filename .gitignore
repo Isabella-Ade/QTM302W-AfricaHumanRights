@@ -70,5 +70,9 @@ rsconnect/
 
 .Rprofile
 
+# renv library folders
+renv/library/
+renv/staging/
+
 
 

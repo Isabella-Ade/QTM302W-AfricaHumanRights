@@ -20,7 +20,7 @@ library(gridExtra)
 ```
 
 ```{r}
-ciri_data <- read_csv("data/dataverse_files/CIRI Data 1981_2011 2014.04.14.csv") 
+ciri_data <- read_csv("data/CIRI_data/CIRI Data 1981_2011 2014.04.14.csv") 
 
 #Removing unnecessary variables from data set
 df <- ciri_data %>% 
@@ -116,7 +116,7 @@ head(df_islands)
 ```
 ```{r}
 # Reading new data set 
-africa_popgdp <- read_csv("data/dataverse_files/africa_popgdp.csv") 
+africa_popgdp <- read_csv("data/africapolis_data/africa_popgdp.csv") 
 
 head(africa_popgdp)
 ```
