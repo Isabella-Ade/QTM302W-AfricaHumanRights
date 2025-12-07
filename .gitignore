@@ -68,5 +68,7 @@ rsconnect/
 *.docx
 *_files/
 
+.Rprofile
+
 
 
