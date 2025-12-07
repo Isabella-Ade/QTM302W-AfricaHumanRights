@@ -64,7 +64,9 @@ This phenonmena led to project objectives: the examination of how human rights p
 
 ├── QTM302W-Group_Project.Rproj
 
-└── README.md
+├── README.md
+
+└── renv.lock
 
 ```
 
