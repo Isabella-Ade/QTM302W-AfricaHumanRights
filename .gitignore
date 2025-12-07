@@ -73,6 +73,9 @@ rsconnect/
 # renv library folders
 renv/library/
 renv/staging/
-
-
+renv/local/
+renv/cellar/
+renv/lock/
+renv/python/
+renv/sandbox/
 
