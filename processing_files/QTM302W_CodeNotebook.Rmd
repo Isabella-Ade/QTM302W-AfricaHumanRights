@@ -1,10 +1,11 @@
 ---
 title: "QTM302W EDA Code Notebook"
-author: "Christina, Hank, Isabella, Leo"
+author: "Christina, Hank, Isabella"
 date: "2025-10-14"
 output:
-  pdf_document: default
-  html_document: default
+  html_document: 
+    toc: true
+    toc_float: true
 ---
 
 ```{r setup, include=FALSE}
@@ -16,18 +17,21 @@ library(tidyverse)
 library(kableExtra)
 ```
 
-## Introduction
+# (1) Introduction
 
-The Cingranelli-Richards (CIRI) Human Rights Data Project is a collection of 15 quantitative human rights indicators, collected annually. This project explores the 2014 version of the dataset, which aggregates data from 202 countries between 1994 and 2014. The dataset measures government human rights practices, meaning it does not measure the effects of non-state actors ([Cingranelli and Richards](http://www.humanrightsdata.com/p/faq.html)). According to the CIRI project website, the data were primarily collected through annual analyses of the U.S. Department of State’s Country Reports on Human Rights Practices, along with supplemental research into Physical Integrity Rights from Amnesty International. A country’s report is typically between 20 and 75 pages ([USDOS](https://www.state.gov/)). Each “country-year” is assigned two trained coders, who closely read the reports to assign scores for the variables. If there are disagreements between coders, senior CIRI staff steps in to find a resolution ([Cingranelli and Richards](http://www.humanrightsdata.com/p/faq.html)) .In this project, we focus on key measures such as **disappearances, extrajudicial killings, political imprisonment, torture, women's economic rights, and women's political rights** to better understand how these indicators vary across countries and regions over time.
+Understanding how governments protect (or fail to protect) fundamental human rights requires data that make global patterns visible. Our project begins from a shared interest in examining where these protections break down, which violations persist, and how state practices differ across world regions. We were drawn to questions that require both comparative breadth and historical depth: Which countries exhibit the most severe physical integrity violations? How do women’s political and economic rights shift over time? And where do regional disparities appear or intensify?  
+  
+The Cingranelli-Richards (CIRI) Human Rights Data Project is a collection of 15 quantitative human rights indicators, collected annually. This project explores the 2014 version of the dataset, which aggregates data from 202 countries between 1994 and 2014. The dataset measures government human rights practices, meaning it does not measure the effects of non-state actors ([Cingranelli and Richards](http://www.humanrightsdata.com/p/faq.html)). According to the CIRI project website, the data were primarily collected through annual analyses of the U.S. Department of State’s Country Reports on Human Rights Practices, along with supplemental research into Physical Integrity Rights from Amnesty International. A country’s report is typically between 20 and 75 pages ([USDOS](https://www.state.gov/)). Each “country-year” is assigned two trained coders, who closely read the reports to assign scores for the variables. If there are disagreements between coders, senior CIRI staff steps in to find a resolution ([Cingranelli and Richards](http://www.humanrightsdata.com/p/faq.html)). In this project, we focus on key measures such as **disappearances, extrajudicial killings, political imprisonment, torture, women's economic rights, and women's political rights** to better understand how these indicators vary across countries and regions over time.
 
 Our motivation is to compare state-level human rights performances, identify persistent violations, and explore potential drivers of changes in human rights. By grouping the countries by the United Nations geoscheme, our project will also explore cross-regional disparities and trends. When choosing a dataset to explore, we wanted to find a topic that would align with all of our research interests; this proved to be difficult because we each have unique academic interests that do not obviously coalesce into a single subject. Ultimately, our diverse interests motivate us to explore a large human rights dataset that includes variables that we are all personally interested in studying.
 
 We selected the CIRI Human Rights Data Project because it offers both analytical depth and ethical relevance. The dataset’s longitudinal scope—covering over two decades of human rights indicators across 202 countries—makes it ideal for exploring performance across regions. Moreover, the scale of the dataset provided an opportunity to practice advanced data cleaning and aggregation techniques on social data.
 
-## Data Exploration
+We selected the CIRI Human Rights Data Project because it offers both analytical depth and ethical relevance, providing over two decades of human rights indicators across 202 countries. Its scale not only allows us to explore long-term trends in state performance but also supports meaningful comparisons across global regions. By grouping countries using the United Nations geoscheme, we can examine cross-regional disparities, patterns of repression, and uneven protections while also practicing advanced data cleaning and aggregation techniques on a complex social dataset. Together, the dataset’s scope, global coverage, and ethical significance make it especially well-suited for investigating the structural conditions that shape human rights outcomes—questions that initially drew our group to this project.  
 
-### Cleaning and Filtering
+# (2) Data Exploration
 
+## (A) Data Cleaning & Filtering
 Given our aim, we decided to narrow our analysis by removing the following variables.
 
 ```{r, message=FALSE}
@@ -66,7 +70,7 @@ print(sum(duplicated(df_full)))
 df_no_dups <- distinct(df_full) 
 ```
 
-### Core Tendency Measures and Visualizations
+## (B) Data Wrangling (more cleaning & merge) 
 
 To create regional comparisons and visualizations, we cleaned missing variables, added a decade variable, and created readable content names:
 
@@ -111,8 +115,7 @@ df_decade_region %>%
 
 The addition of these two variables sllowed us to create sensible categories to view some of our data. The `DECADE` category grouped the `YEAR` column into 10 year chunks that enabled us to view how the human rights indicators change across time. The `CONT` variable allowed us to view changes not only by country, but also across the UN determined geoscheme using by the variable `UNREG`. By creating these two variables, there we had more options to analyze the data with these different categories.
 
-#### Calculating Core Tendencies
-
+## (C) Calculating Mean Indicators  
 First, we made a list (key_vars) of six variables we were most interested in analyzing: - `DISAP`: disappearances - `KILL`: extrajudicial killings - `POLPRIS`: political imprisonment - `TORT`: torture - `WECON`: women’s economic rights - `WOPOL`: women’s political rights. This list made it easier to apply the same operations to all indicators at once.
 
 We grouped the data by country and then calculated the mean value of each key variable across all years. The result is one row per country showing its average performance on each indicator.
@@ -172,81 +175,82 @@ df_continent_decade_avg %>%
   kable_styling()
 ```
 
-#### Comparing Human Rights Indicators Across Geoschemes
+## (D) Comparing Human Rights Indicators ACROSS Geoschemes
 
 Firstly, we created a function that would allow us to visualize and compare human rights indicators over a period of thirty years across the geoschemes (Asia, Africa, Europe, North America, Oceania, and South & Central America). For all variables except for `WECON` and `WEPOL,` values are all the categorical variables of 0, 1, and 2. **ZERO (0)** indicates that it occurs frequently, **ONE (1)** indicates occasionally, and **TWO (2)** indicates none in a given year. For `WECON` and `WEPOL,` values are categorical variables of 0, 1, 2, and 3. A **ZERO (0)** indicates that there were no rights and that systematic discrimination based on sex may have been built into law. A **ONE (1)** indicates some rights with no government enforcement, a **TWO (2)** indicates some rights and some government enforcement of these rights, and a **THREE (3)** indicates that all or close to all rights were guaranteed and the government fully enforces them.
 
 ```{r}
-plot_hr_indicator <- function(data, indicator, title_label) {
-  
-  data %>%
-    group_by(CONT, DECADE) %>%
-    summarize(avg_value = mean({{ indicator }}, na.rm = TRUE), .groups = "drop") %>%
-    ggplot(aes(x = DECADE, y = avg_value, color = CONT, group = CONT)) +
-    geom_line(size = 1.2) +
-    geom_point(size = 3) +
-    labs(
-      title = paste(title_label, "by Continent Over Time"),
-      x = "Decade",
-      y = paste("Average", title_label, "Value"),
-      color = "Continent"
-    ) +
-    theme_minimal(base_size = 9) 
-}
+df_facet <- df_continent_decade_avg %>%
+  group_by(CONT, DECADE) %>%
+  summarize(
+    WECON  = mean(WECON,  na.rm = TRUE),
+    DISAP  = mean(DISAP,  na.rm = TRUE),
+    TORT   = mean(TORT,   na.rm = TRUE),
+    POLPRIS = mean(POLPRIS, na.rm = TRUE),
+    WOPOL  = mean(WOPOL,  na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  pivot_longer(
+    cols = c(WECON, DISAP, TORT, POLPRIS, WOPOL),
+    names_to = "indicator",
+    values_to = "avg_value"
+  )
 ```
+  This code groups the dataset by continent and decade, calculates the average value of five human rights indicators for each group, and then reshapes the data into a long format using pivot_longer(). Converting the indicators into a single “indicator” column makes it easy to create the same plot for multiple variables using one piece of ggplot code, especially when using facet plots which will be shown in the next steps. 
 
-This function allows us to create the same graphs with different human rights indicators without repeating the code several times. It takes the data frame, groups by continent and decade before finding the mean over the human rights indicator. It then uses `ggplot` to create a plot with all the continents/geoschemes for that indicator.
+```{r}
+df_facet$indicator <- recode(df_facet$indicator,
+  WECON = "Women's Economic Rights",
+  DISAP = "Disappearances",
+  TORT = "Torture",
+  POLPRIS = "Political Imprisonment",
+  WOPOL = "Women's Political Rights"
+)
 
-```{r, warning=FALSE}
-plot_hr_indicator(df_continent_decade_avg, WECON, "Women's Economic Rights")
+ggplot(df_facet, aes(x = DECADE, y = avg_value, color = CONT, group = CONT)) +
+  geom_line(size = 1.2) +
+  geom_point(size = 3) +
+  facet_wrap(~ indicator, scales = "free_y") +
+  labs(
+    title = "Human Rights Indicators by Continent Over Time",
+    x = "Decade",
+    y = "Average Value",
+    color = "Continent"
+  ) +
+  theme_minimal(base_size = 10) +
+  theme(
+    strip.text = element_text(face = "bold"),
+    legend.position = "bottom"
+  )
 ```
-
+  This code creates faceted line plots showing trends in human rights indicators over time. Below are the interpretations for each Humar Rights Indicator graph: 
+#### Women's Economic Rights (WECON):  
 The graph tracks the average `WECON` rights scores across six continents across four decades (1980s-2010s). Higher values indicate stronger rights and greater government enforcement of women’s economic equality. Most regions show gradual improvement between 1980s and 2010s, but the pace and consistency vary dramatically. Interestingly, no region exhibits a linear, uninterrupted rise.
 
-North America and Europe are the region leaders, with the former showing more rapid improvement. Oceania and South & Central Asia maintain mid-range scores (\~1.5-1.7) with mild upward movement, showing moderate improvement but persistent gaps relative to Western regions. Asia and Africa consistently score lowest; both regions show a decline from the 2000s to the 2010s.
+North America and Europe are the region leaders, with the former showing more rapid improvement. Oceania and South & Central Asia maintain mid-range scores (\~1.5-1.7) with mild upward movement, showing moderate improvement but persistent gaps relative to Western regions. Asia and Africa consistently score lowest; both regions show a decline from the 2000s to the 2010s.  
 
-```{r}
-plot_hr_indicator(df_continent_decade_avg, DISAP, "Disappearance")
-```
-
-The graph illustrates how the average disappearance `DISAP` score changes across continents across decades from the 1980s to the 2010s. Higher values indicate fewer or no disappearances, while lower values suggest more frequent violations.
-
-North America and Oceania remain consistently high (around 2.0) throughout all decades, indicating that disappearances are relatively rare. Europe also performs strongly and steadily just below 2.0, growing modestly to \~1.9 by the 2010s. South & Central America improves dramatically from the 1980s to the 2000s, peaking above 1.8. Africa and Asia show inconsistent progress, with the latter remaining the lowest from the 1990s onward.
-
+#### Disappearances (DISAP):  
+The graph illustrates how the average disappearance `DISAP` score changes across continents across decades from the 1980s to the 2010s. Higher values indicate fewer or no disappearances, while lower values suggest more frequent violations.  
+North America and Oceania remain consistently high (around 2.0) throughout all decades, indicating that disappearances are relatively rare. Europe also performs strongly and steadily just below 2.0, growing modestly to \~1.9 by the 2010s. South & Central America improves dramatically from the 1980s to the 2000s, peaking above 1.8. Africa and Asia show inconsistent progress, with the latter remaining the lowest from the 1990s onward.  
 The data suggests a clear divide between regions with strong institutional protection of human rights (North America, Europe, Oceania) and those where disappearances remain more common (Asia, Africa, parts of Latin America). While global averages trend upward, indicating a general reduction in disappearances over time, progress is uneven and fragile.
 
-```{r}
-plot_hr_indicator(df_continent_decade_avg, TORT, "Torture")
-```
-
-The graph displays average tortue `TORT` values across continents from the 1980s to the 2010s. Higher values represent less torture, while lower values indicate more frequent use of torture.
-
-Across nearly every continent, the average torture score declines from the 1980s to the 1990s. While some regions show mild recovery afterward, rights related to protection from torture have not universally improved.
-
-Oceania is the highest-performing region, despite a sharp drop in the 1990s. South & Central America has improved modestly since a dip in the 1990s. North America and Europe had relatively high scores in the 1980s but have steadily declined since. Africa and Asia likewise trend downward.
-
+#### Torture (TORT):  
+The graph displays average tortue `TORT` values across continents from the 1980s to the 2010s. Higher values represent less torture, while lower values indicate more frequent use of torture.  
+Across nearly every continent, the average torture score declines from the 1980s to the 1990s. While some regions show mild recovery afterward, rights related to protection from torture have not universally improved.  
+Oceania is the highest-performing region, despite a sharp drop in the 1990s. South & Central America has improved modestly since a dip in the 1990s. North America and Europe had relatively high scores in the 1980s but have steadily declined since. Africa and Asia likewise trend downward.  
 The overall trend suggests stagnation or regression in preventing torture worldwide.
 
-```{r}
-plot_hr_indicator(df_continent_decade_avg, POLPRIS, 
-                  "Political Imprisonment")
-```
-
-The graph tracks the average political imprisonment (`POLPRIS`) values across the six continents from 1980 to 2010. Higher values indicate fewer political imprisonments, while lower values indicate more frequent or systemic political imprisonment.
-
+#### Political Imprisonment (POLPRIS):  
+The graph tracks the average political imprisonment (`POLPRIS`) values across the six continents from 1980 to 2010. Higher values indicate fewer political imprisonments, while lower values indicate more frequent or systemic political imprisonment.  
 North America and Oceania consistently hold the highest averages, maintaining scores close to 2.0 throughout almost all decades. Europe also demonstrates steady improvement from the 1980s to the 2000s, peaking near 1.8, before a slight dip in 2010. South & Central America starts at a low score in the 1980s but sharply increases in the 1990s and 2000s. Africa and Asia show modest increases, with the latter remaining lowest across all decades.
 
-```{r}
-plot_hr_indicator(df_continent_decade_avg, WOPOL, "Women's Political Rights")
-```
+#### Women's Political Rights (WOPOL):  
+The plot shows how average women’s political rights (`WECON`) values have changed across continents from the 1980s to the 2010s. Higher values represent greater political inclusion and stronger enforcement of women’s political rights.  
+Overall, every content shows some upward movement over the total period, suggesting a worldwide trend toward expanding government protections of women’s political rights.  
+Europe and North America have the highest scores across most decades, hovering around 2.0-2.3. South & Central America shows major improvement, rising from 1.7 in the 1980s to over 2.1 by the 2000s. Africa and Asia start low but rise steadily. Oceania is the outlier; it fluctuates throughout the decades, dipping as low as \~1.3 in the 2000s.  
 
-The plot shows how average women’s political rights (`WECON`) values have changed across continents from the 1980s to the 2010s. Higher values represent greater political inclusion and stronger enforcement of women’s political rights.
-
-Overall, every content shows some upward movement over the total period, suggesting a worldwide trend toward expanding government protections of women’s political rights.
-
-Europe and North America have the highest scores across most decades, hovering around 2.0-2.3. South & Central America shows major improvement, rising from 1.7 in the 1980s to over 2.1 by the 2000s. Africa and Asia start low but rise steadily. Oceania is the outlier; it fluctuates throughout the decades, dipping as low as \~1.3 in the 2000s.
-
-#### Comparing Human Rights Indicators within a Geoscheme
+## (E) Comparing Human Rights Indicators WITHIN a Geoscheme
+### Continents:
 
 ```{r}
 # Function for seeing indicator within continent 
@@ -274,6 +278,7 @@ plot_indicator_means <- function(data, continent, indicators) {
 
 This function allows us to create the same graphs to compare human rights indicators within a geoscheme without repeating the code several times. It takes the data frame, filters for continent and find the mean value across the indicator within that continent. It then uses `ggplot` to create a plot with all the indicators in that geoscheme/continent.
 
+#### Africa
 ```{r}
 # Plotting function for Africa Geoscheme across all key variables
 plot_indicator_means(
@@ -288,7 +293,8 @@ This bar plot narrows down on the continent of Africa and compares the average v
 From the graph, Women’s Political Rights (WOPOL) stand out with the highest average value, close to 2, suggesting a relatively greater recognition or protection of these rights compared to others. Following this, indicators such as Disappearances (DISAP) and Killings (KILL) show moderately high averages, while Political Imprisonment (POLPRIS), Women’s Economic Rights (WECON), and especially Torture (TORT) have lower averages.
 
 Overall, the data reveals differing levels of human rights protection across Africa, highlighting both areas of progress and those still in need of improvement.
-
+  
+#### Asia  
 ```{r}
 # Plotting function for Asia Geoscheme across all key variables
 plot_indicator_means(
@@ -303,7 +309,8 @@ This plot narrows down on the continent of Asia and tracks the different human r
 Within this graph, we notice a higher emphasis on women’s political rights with an average of \~1.5, followed closely by disappearances and killings. Worker rights, political imprisonment, and torture have lower averages, indicating less importance in this region’s human rights indicators.
 
 Compared to Africa, Asia shows slightly lower overall averages across most indicators, suggesting a smaller degree of variation and somewhat weaker emphasis on human rights protections overall.
-
+  
+#### North America  
 ```{r}
 # Plotting function for North America Geoscheme across all key variables
 plot_indicator_means(
@@ -318,7 +325,8 @@ This bar plot narrows down on the continent of North America and compares the av
 From the graph, Women’s Economic Rights (`WECON`) stand out with the highest average value, close to 2.5, suggesting a relatively greater recognition or protection of these rights compared to others. Following this, indicators such as Woman's Political Rights (`WOPOL`), Disappearances (DISAP), Political Imprisonment (`POLPRIS`), and killings (`KILL`) show moderately high averages at around 1.4 - 2.1, while Torture (`TORT`) has the lowest average.
 
 Compared to Asia, North America shows higher overall averages across most indicators, suggesting a larger degree of variation and emphasis on human rights protections overall.
-
+  
+#### South & Central America
 ```{r}
 # Plotting function for South & Central America Geoscheme across all key variables
 plot_indicator_means(
@@ -333,7 +341,8 @@ This bar plot narrows down on the continent of South & Central America and compa
 From the graph, Women’s Political Rights (`WOPOL`) stand out with the highest average value. Following this, indicators such as Disappearances (`DISAP`), Woman's Economic Rights (`WECON`), Political Imprisonment (`POLPRIS`), and killings (`KILL`) range from averages of about 1.1 - 1.7, while Torture (`TORT`) has the lowest average.
 
 Compared to North America, South & Central America shows lower overall averages across most indicators, suggesting a smaller degree of variation and emphasis on human rights protections overall.
-
+  
+#### Oceania
 ```{r}
 # Plotting function for Oceania Geoscheme across all key variables
 plot_indicator_means(
@@ -347,9 +356,42 @@ This bar plot narrows down on the continent of Oceania and compares the average 
 
 From the graph, Disappearances (`DISAP`), Political Imprisonment (`POLPRIS`), and killings (`KILL`) have the highest average values and are relatively in the range of 1.8 - 2. The lowest average value still being Torture (`TORT`) but difference is that the mean is not drastically lower than any of the other indicator averages.
 
-Compared to the rest of the continents, the Oceania geoscheme shows a drastically different ordering of highest averages to the lower averages, the most shocking being Disappearances being the highest indicator. This suggests that there could be a much smaller emphasis on human rights protection overall when in comparison the rest of the world.
+Compared to the rest of the continents, the Oceania geoscheme shows a drastically different ordering of highest averages to the lower averages, the most shocking being Disappearances being the highest indicator. This suggests that there could be a much smaller emphasis on human rights protection overall when in comparison the rest of the world.  
 
-#### Comparing a Human Rights Indicators over Countries in a Geoscheme
+#### All Continents:
+Below, we have made it easier for comparison by eye by providing a combined view of all the graphs we just described in detail:   
+```{r}
+plot_indicator_means_facet <- function(data, indicators) {
+  data %>%
+    select(CONT, all_of(indicators)) %>%
+    pivot_longer(cols = all_of(indicators), names_to = "Indicator", values_to = "Value") %>%
+    group_by(CONT, Indicator) %>%
+    summarize(Mean_Value = mean(Value, na.rm = TRUE), .groups = "drop") %>%
+    ggplot(aes(x = reorder(Indicator, Mean_Value), y = Mean_Value, fill = Indicator)) +
+    geom_col() +
+    coord_flip() +
+    scale_y_continuous(limits = c(0, 3), breaks = 0:3) +
+    labs(
+      title = "Average Human Rights Indicator Values by Continent: Comparison",
+      x = "Human Rights Indicator",
+      y = "Mean",
+      fill = "Indicator"
+    ) +
+    facet_wrap(~ CONT, scales = "free_y") +
+    theme_minimal(base_size = 10) +
+    theme(
+      legend.position = "none",
+      strip.text = element_text(face = "bold")
+    )
+}
+
+plot_indicator_means_facet(df_continent_decade_avg, key_vars)
+
+```
+
+### Countries:  
+  
+**Side-note: Plots may be hard to view so you can also reference the png files saved at the following location in the repository: /GitHub/QTM302W-Group-Project/processing_files/geoscheme_country_plots **  
 
 ```{r}
 
@@ -376,11 +418,22 @@ plot_country_means <- function(data, continent, indicators) {
 
 This function creates a plot that creates a graph of the countries within a geoscheme and their averaged human rights indicators. Below are an assortment of notable plots that came out of utilizing this function.
 
-**Africa Geoscheme**
+#### Africa Geoscheme
 
 ```{r}
 # Average values of women's economic rights among countries in Africa
-plot_country_means(df_continent_decade_avg, "Africa", 'WECON')
+africa_wecon <- plot_country_means(df_continent_decade_avg, "Africa", 'WECON')
+
+africa_wecon
+
+# Saving to png for better viewing
+# ggsave(
+#   filename = "WECON_Africa_Geoscheme.png", 
+#   plot = africa_wecon,
+#   width = 14, 
+#   height = 12,
+#   dpi = 300  
+# )
 ```
 
 The chart ranks African countries based on their average score for Women's Economic Rights (`WECON`) on a scale of 0-3, where higher scores represent stronger rights and protections.
@@ -389,7 +442,18 @@ A striking pattern among the top-performing countries is the prevalence of islan
 
 ```{r}
 # Average values of political imprisonment  among countries in Africa
-plot_country_means(df_continent_decade_avg, "Africa", 'POLPRIS')
+africa_polpris <- plot_country_means(df_continent_decade_avg, "Africa", 'POLPRIS')
+
+africa_polpris
+
+# Saving to png for better viewing
+# ggsave(
+#   filename = "POLPRIS_Africa_Geoscheme.png", 
+#   plot = africa_polpris,
+#   width = 14, 
+#   height = 12,
+#   dpi = 300  
+# )
 ```
 
 The chart ranks African countries based on their average score for Political Prisoners (`POLPRIS`) on a scale of 0–2, where higher scores indicate stronger protections against political imprisonment and greater respect for political freedoms.
@@ -398,11 +462,22 @@ A clear pattern emerges among the top-ranking countries—many are smaller or is
 
 In contrast, several of the lowest-scoring countries, including Sudan, Libya, and Egypt, have experienced prolonged political instability, authoritarian governance, or civil conflict, all of which are often associated with higher rates of political repression. This contrast underscores how political structure and historical context play significant roles in shaping human rights outcomes across the continent.
 
-**Asia Geoscheme**
+#### Asia Geoscheme
 
 ```{r}
 # Average values of women's political rights among countries in Asia
-plot_country_means(df_continent_decade_avg, "Asia", 'WOPOL')
+asia_wopol <- plot_country_means(df_continent_decade_avg, "Asia", 'WOPOL')
+
+asia_wopol
+
+# Saving to png for better viewing
+# ggsave(
+#   filename = "WOPOL_Asia_Geoscheme.png", 
+#   plot = asia_wopol,
+#   width = 14, 
+#   height = 12,
+#   dpi = 300  
+# )
 ```
 
 The chart ranks Asian countries by their average score for Women’s Political Rights (`WOPOL`) on a 0–3 scale, where higher values suggest stronger protections and greater opportunities for women’s political participation.
@@ -413,26 +488,50 @@ Toward the lower end of the distribution, countries such as Saudi Arabia, Brunei
 
 ```{r}
 # Average values of political imprisonment rights among countries in Asia
-plot_country_means(df_continent_decade_avg, "Asia", 'POLPRIS')
+asia_polpris <- plot_country_means(df_continent_decade_avg, "Asia", 'POLPRIS')
+
+asia_polpris
+
+# Saving to png for better viewing
+# ggsave(
+#   filename = "POLPRIS_Asia_Geoscheme.png", 
+#   plot = asia_polpris,
+#   width = 14, 
+#   height = 12,
+#   dpi = 300  
+# )
 ```
 
 This chart shows the average Political Prisoners (`POLPRIS`) indicator values across Asian countries, where higher scores generally correspond to fewer political prisoners and stronger protections against political repression. The wide range of scores highlights a notable diversity in political environments across the region.
 
 Countries such as Japan, East Timor, and Mongolia appear toward the top, suggesting comparatively fewer reported restrictions on political dissent. In contrast, lower scores among countries like Iran, India, and Syria might reflect higher instances of political imprisonment or limitations on political freedoms. Still, these patterns likely arise from a mix of historical, legal, and political contexts—such as differing approaches to governance, national security, and dissent—rather than a uniform regional trend. Overall, the variation in POLPRIS scores suggests that Asia encompasses a broad spectrum of political openness and restriction, where each nation’s position may be shaped by distinct domestic and international influences.
 
-**South & Central America Geoscheme**
+#### South & Central America Geoscheme  
 
 ```{r}
 # Average values of women's economic rights among countries in... 
 # South & Central America
-plot_country_means(df_continent_decade_avg, "South & Central America", 'WECON')
+scamerica <- plot_country_means(df_continent_decade_avg, "South & Central America", 'WECON')
+
+scamerica
+
+# Saving to png for better viewing
+# ggsave(
+#   filename = "WECON_SouthCentral_America_Geoscheme.png", 
+#   plot = scamerica,
+#   width = 14, 
+#   height = 12,
+#   dpi = 300  
+# )
 ```
 
 The chart ranks South & Central American countries by their average score for women's economic rights (`WECON`) on a 0–3 scale, where higher values suggest stronger protections and greater opportunities for women’s economic rights.
 
 Similar to the results of the African countries for this same indicator, the highest ranking countries are smaller/island countries such as Costa Rica, Saint Lucia, and Cuba. However, the lowest ranked country is Haiti, despite being the oldest country to become an independent country in this region. It would be interesting to observe the socio-political and historical context that would have some of the oldest countries in South and Central America, such as Haiti and Paraguay, ranked quite low. Ultimately, the variation in `WECON` scores is unsurprising across a region with vastly different countries with unique histories.
 
-#### Global Heat Map of Human Rights Indicators
+## (F) Global Heat Map of Human Rights Indicators
+
+**Side-note: Plots may be hard to view so you can also reference the png files saved at the following location in the repository: /GitHub/QTM302W-Group-Project/processing_files/global_heatmap_plots ** 
 
 ```{r, warning=FALSE}
 # Fetching world map model
@@ -449,12 +548,9 @@ map_joined <- world %>%
   filter(!is.na(Score))
 
 # Create Map
-ggplot(map_joined, aes(long, lat, group = group)) +
+p <- ggplot(map_joined, aes(long, lat, group = group)) +
   geom_polygon(aes(fill = Score, alpha = Score), color = "white", size = 0.2) +
-  scale_fill_gradient(
-    name = "Score (0–3)",
-    low = "pink", high = "navy"  # no na.value
-  ) +
+  scale_fill_gradient(name = "Score (0–3)", low = "pink", high = "navy") +
   scale_alpha_continuous(range = c(0.3, 1)) +
   coord_fixed(1.3) +
   labs(
@@ -465,9 +561,21 @@ ggplot(map_joined, aes(long, lat, group = group)) +
   theme_minimal(base_size = 8) +
   theme(
     legend.position = "bottom",
-    strip.text = element_text(face = "bold"), 
-    plot.title = element_text(size = 12, face = "bold"), 
-    plot.subtitle = element_text(size = 9)) 
+    strip.text = element_text(face = "bold"),
+    plot.title = element_text(size = 12, face = "bold"),
+    plot.subtitle = element_text(size = 9)
+  )
+
+p
+
+# Saving to png for better viewing
+#ggsave(
+#   filename = "human_rights_maps.png", 
+#   plot = p,
+#   width = 14, 
+#   height = 12,
+#   dpi = 300  
+# )
 ```
 
 This figure displays global heat maps of the six human rights indicators: Disappearances (`DISAP`), Killings (`KILL`), Political Imprisonment (`POLPRIS`), Torture (`TORT`), Women’s Economic Rights (`WECON`), and Women’s Political Rights (`WOPOL`). The color intensity represents the score for each indicator, where darker shades indicate higher scores (closer to 3) and lighter shades indicate lower scores (closer to 0).
@@ -476,7 +584,7 @@ Across the maps, we can observe that darker regions on a global scale are largel
 
 One thing to note is that North America and Australia consistently display darker shades across nearly all the heat maps, compared to other regions. This pattern may suggest that these areas tend to have more concrete legal frameworks, democratic institutions, and higher enforcement capacity, which could have contributed to the better outcomes found across multiple indicators.
 
-## Conclusion
+## (G) Conclusion
 
 Our exploratory data analysis provides an overview of patterns and distributions across variables within the dataset. By comparing and visualizing trends, we developed a deeper understanding of the data’s structure and potential implications.
 
@@ -492,7 +600,7 @@ This EDA lays a foundation for deeper statistical modeling. Looking forward, fut
 
 3.  Refining data visualization (e.g., dashboards) to make findings more accessible.
 
-## Looking Forward
+## (H) Looking Forward
 
 -   What are the historical contexts that allow island nations in Africa to have greater human rights than larger countries in the same geoscheme?
 -   Do continents with higher average economic indicators also tend to score higher on human rights measures?
@@ -501,7 +609,7 @@ This EDA lays a foundation for deeper statistical modeling. Looking forward, fut
 -   Are there clusters of countries that seem to share similar profiles of rights protections?
 -   How might global events have influenced changes in these indicators?
 
-## Works Cited
+## (I) Works Cited
 
 U.S. Department of State. (n.d.). Country Reports on Human Rights Practices. Retrieved 7 October 2025, from <https://www.state.gov/reports-bureau-of-democracy-human-rights-and-labor/country-reports-on-human-rights-practices/>\
 Cingranelli, D. L., & Richards, D. L. (2015). CIRI Human Rights Dataset, Version 2014.04.14. Harvard Dataverse. <https://doi.org/10.7910/DVN/UKCPXT>
