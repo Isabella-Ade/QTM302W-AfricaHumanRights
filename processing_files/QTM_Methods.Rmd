@@ -2,14 +2,15 @@
 title: "QTM302W Methods Section"
 author: "Isabella Adeola, Christina Dai, Hank Standaert"
 date: "2025-11-06"
-output: html_document
+output:
+  html_document:
+    toc: true
+    toc_float: true
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-
-## R Markdown
 
 ```{r}
 library(readr)
@@ -21,6 +22,7 @@ library(kableExtra)
 library(gridExtra)
 ```
 
+## (1) Data Cleaning/ Preparation
 ```{r}
 ciri_data <- read_csv(here("data", "CIRI_data", "CIRI_data_raw.csv")) 
 
@@ -143,7 +145,8 @@ islands_joined
 
 After reviewing the data set for our island_joined information, we chose to only keep the data after 2000 since any data that was before that year was missing/ full of NAs.
 
-### Comparing the Differences in PHYSINT Between Island Nations and Mainland by Years
+## (2) Comparing the Differences Between Island Nations and Mainland by Years
+### (a) Physical Integrity Rights Index (PHYSINT) 
 
 PHYSINT: Physical Integrity Rights Index\
 This is an index constructed from the Torture, Extrajudicial Killing, Political Imprisonment, and Disappearance indicators. It ranges from 0 (no government respect for these four rights) to 8 (full government respect for these four rights).
@@ -175,9 +178,7 @@ ggplot(combined_df, aes(x = YEAR, y = PHYSINT, color = region)) +
 
 [enter interpretation here, making sure to mention the huge fluctuations for island nations]
 
-### Comparing the Differences in Women's Political and Economic Rights Between Island Nations and Mainland by Decades
-
-### WECON Comparison
+### (b) Women's Rights (WOPOL & WECON)
 
 ```{r}
 #Capturing the Average Scores from Data Set
@@ -211,7 +212,8 @@ ggplot(mean_rights, aes(x = factor(DECADE), y = Mean_Score, fill = region)) +
 
 [enter interpretation here]
 
-### Exploring Influential Factors Contributing to Women's Economic Rights Between the Island Nations
+## (3) Comparing the Differences Between Individual Island Nations
+### (a) WECON Between Island Nations: 
 
 We hypothesized that GDP, as a measure of a nation’s economic status, would be associated with women’s economic rights (WECON).
 
@@ -246,7 +248,7 @@ Individually, most predictors, including GDP, TPOP, URBPOP, and AREA, were not s
 
 Overall, while GDP alone does not appear to significantly predict WECON scores, its interaction with population may play a meaningful role, highlighting the importance of considering combined socio-economic factors.
 
-### Exploring Influential Factors Contributing to Women's Political Rights Between the Island Nations
+### (b) WOPOL Between Island Nations: 
 
 We hypothesized that an island nation’s population size might influence women’s political rights (WOPOL). For example, in smaller populations, each individual’s opinion may carry more weight, potentially giving women greater influence in government.
 
@@ -283,7 +285,7 @@ Individually, none of the predictors—including GDP, TPOP, URBPOP, AREA, and th
 
 Overall, these results indicate that, based on this dataset, there is no strong evidence that GDP, population size, urbanization, land area, or their interaction significantly predict women’s political rights in island nations.
 
-### Exploring Influential Factors Contributing PHYSINT Between the Island Nations
+### (c) PHYSINT Between Island Nations: 
 
 Next, we wanted to explore if there were any correlations for variables within island nations to PHYSINT. We ran a multiple variable linear regression and after testing out multiple different variable interaction combinations, we were able to identify our most significant result with the following model:
 
