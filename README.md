@@ -51,6 +51,10 @@ This purpose of this project is the examination of how human rights protections 
 
 ├── processing_files/
 
+  │ ├── geoscheme_country_plots
+
+  │ ├── global_heatmap_plots
+
   │ ├── QTM302W_CodeNotebook.Rmd
 
   │ └── QTM_Methods.Rmd
