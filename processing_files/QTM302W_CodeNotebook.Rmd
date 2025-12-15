@@ -601,28 +601,27 @@ One thing to note is that North America and Australia consistently display darke
 
 ## (G) Conclusion
 
-Our exploratory data analysis provides an overview of patterns and distributions across variables within the dataset. By comparing and visualizing trends, we developed a deeper understanding of the data’s structure and potential implications.
+Our analysis demonstrates the uneven nature of human rights patterns. Rather than a consistent, uniform increase or decrease over time, we see uneven, clustered trends. Across nearly all analyses, Europe, North America, and parts of Oceania consistently score higher on physical integrity protections (DISAP, KILL, POLPRIS, TORT) and women’s rights (WECON, WOPOL); Africa and Asia tend to display lower averages and greater internal variation. 
 
-This analysis does not make inferential claims; rather, it explores areas of potential significance for future analysis. For example, we found a decrease in disappearance scores from the 2000s to the 2010s in all regions except for North America. This trend is concerning and highlights a potential area for future research.
+One of the most striking insights from this analysis is the apparent disconnect between different categories of rights. For nearly all decades, Europe and North America score highest on physical integrity indicators (DISAP, KILL, POLPRIS, TORT), while Africa and Asia exhibit lower average values and greater dispersion across countries. However, this regional hierarchy does not apply to all indicators. Women’s rights variables (WECON and WOPOL) display more widespread improvement across decades, particularly from the 1990s onwards. This trend is found even in regions where the physical integrity protections remain weak. This divergence suggests that improvement in human rights protections in one area does not necessarily correlate to broader reform. 
 
-Generally, we notice higher scores across key variables in Europe, North America, and Oceania; South & Central America has seen notable increases in key indicators, while Asia and Africa tend to remain the lowest.
+Temporal aggregation by decade reveals tension. While DISAP and KILL modestly improve in several regions during the 1990s and 200s, TORT and POLPRIS either stagnate or decline across multiple continents, including Europe and North America. This pattern further complicates the narrative of linear global progress.
 
-This EDA lays a foundation for deeper statistical modeling. Looking forward, future research could build on these findings by:
+These regional patterns are high-level, but finer levels of aggregation reveal insights into subregional dynamics. When disaggregating WECON and POLPRIS within Africa, smaller and island nations consistently appear among the highest performers. Therefore, continental averages might be masking meaningful heterogeneity; population, GDP, or colonial history may be as relevant as UN geoscheme in explaining country-level variation.
 
-1.  Conducting inferential analysis (i.e., regression).
-
-2.  Integrating additional datasets, such as GDP, education, or political regime type.
-
-3.  Refining data visualization (e.g., dashboards) to make findings more accessible.
+Altogether, this EDA identifies which indicators move together, which diverge, and where aggregation obscures meaningful differences.
 
 ## (H) Looking Forward
 
--   What are the historical contexts that allow island nations in Africa to have greater human rights than larger countries in the same geoscheme?
--   Do continents with higher average economic indicators also tend to score higher on human rights measures?
--   How stable are these scores over time: do countries with low scores show signs of improvement, or are they consistently repressive?
--   Could geographic, cultural, or religious groupings better explain variation than continent-level groupings?
--   Are there clusters of countries that seem to share similar profiles of rights protections?
--   How might global events have influenced changes in these indicators?
+The findings of our analysis point toward a next stage that further pushes toward attempting to explain the trends. Future work would build directly on tensions and asymmetries identified here.
+
+A next step would be to test whether the regional and country-level differences observed persist once political, economic, and institutional factors are incorporated. For instance, regression models factoring in regime type, GDP, population, etc. could help determine whether continent-level effects remain significant predictors of human rights outcomes or whether deeper structural variables offer more explanatory power.
+
+Additionally, the frequent high scores of island and smaller states suggests the value of reframing geographic categories for future analysis. A follow-up analysis might cluster nations into smaller regions or by population, size, or GDP within each continent.
+
+Temporal instability within indicators further motivates longitudinal analysis. Countries that demonstrate improvement in one decade followed by regression in another raise questions about the sustainability of human rights improvements. Event-based analysis or difference-in-differences approaches could help isolate the effects of economic crises, regime changes, or international pressures on specific human rights outcomes.
+
+Ultimately, our analysis narrows a broad interest in global human rights into a focused set of research directions. The questions it generates are direct responses to patterns in the data. Subsequent analysis should take these insights as a starting point, using inferential tools to help explain why these trends exist.How might global events have influenced changes in these indicators?
 
 ## (I) Works Cited
 
